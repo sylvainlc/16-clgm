@@ -123,73 +123,22 @@ The new indicator variables $(a_i^k)_{1\le k \le N}$ are sampled independently i
 \[
 \gamma_i^{j,k} = p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) Q(a_{i-1}^k,j)\eqsp.
 \]
-$\mu_i^k$ and $P_i^k$ are updated according to:
+The conditional distribution of $Y_i$ given $a^k_{1:i-1}$, $a_i$ and $Y_{1:i-1}$ is a Gaussian distribution with mean $c_{a_i}+B_{a_i}\mu^k_{i|i-1}$ and variance $B_{a_i}P^k_{i|i-1}B'_{a_i} + \barG_{a_i}$ which means that $\gamma_i^{j,k}$ may be written:
+\[
+\gamma_i^{j,k} =  Q(a_{i-1}^k,j)|B_jP^k_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^k_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^k_{i|i-1}}^2\right\} \eqsp,
+\]
+where 
 \begin{align*}
 \mu^{k}_{i|i-1} &= d_{a_{i}^k} + T_{a_{i}^k}\mu^k_{i-1}\eqsp,\\
-P^k_{i|i-1} &= T_{a_{i}^k}P^k_{i-1}T'_{a_{i}^k} + \barH_{a_{i}^k}\eqsp,\\
+P^k_{i|i-1} &= T_{a_{i}^k}P^k_{i-1}T'_{a_{i}^k} + \barH_{a_{i}^k}\eqsp.
+\end{align*}
+$\mu_i^k$ and $P_i^k$ are updated according to:
+\begin{align*}
 K^k_{i} &=P^k_{i|i-1}B'_{a_{i}^k}\left(B_{a_{i}^k}P^k_{i|i-1}B'_{a_{i}^k} + \barG_{a_{i}^k}\right)^{-1}\eqsp,\\
 \mu^k_{i} &= \mu^{k}_{i|i-1} + K^k_i\left(Y_i - c_{a_{i}^k} - B_{a_{i}^k}\mu^{k}_{i|i-1}\right)\eqsp,\\
 P^k_{i} &=\left(I-K^k_{i}B_{a_{i}^k}\right)P^k_{i|i-1}\eqsp.
 \end{align*}
 The importance weights are given by $\omega_i^k \propto \sum_{j=1}^J \gamma_i^{j,k}$.
-
-
-
-%The conditional distribution of $Y_1$ given $a^1_i$ and $Y_{1:i-1}$ is a Gaussian distribution with mean $c_{a_i}+B_{a_i}\mu^k_{i|i-1}$ and variance $B_{a_i}P^k_{i|i-1}B'_{a_i} + \barG_{a_i}$ which means that $\gamma_i^j$ may be written:
-%\begin{align*}
-%\gamma_i^j &= p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) Q(a_{i-1}^k,j) \eqsp, \\
-%& =  Q(a_{i-1}^k,j)|B_jP^k_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^k_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^k_{i|i-1}}^2\right\} \eqsp.
-%\end{align*}
-%\begin{algorithm}
-%\DontPrintSemicolon
-%\KwIn{Initial distribution $\pi$ on $\{1,\ldots,J\}$, initial mean $\mu_1$ and variance $\Sigma_1$.}
-%\KwOut{A set of trajectories $(a^k_{1:i})_{1\le k\le N}$, means $(\mu^k_{i})_{1\le k\le N}$ and variances $(P^k_{i})_{1\le k\le N}$ with importance weights $(\omega^k_i)_{1\le k\le N}$, $1\le i \le n$.}
-%{\bf Initialization}\;
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%Sample $a^k_1 \in \{1,\ldots,J\}$ such that $\mathbb{P}\left(a_1^k = j\right) = \pi_j$. \;
-%Compute $\mu_1^k$ and $P_1^k$:
-%\begin{align*}
-%K^k_{1} &=\Sigma_1B'_{a_1^k}\left(B_{a_1^k}\Sigma_1B'_{a_1^k} + \barG_{a_1^k}\right)^{-1}\eqsp,\\
-%\mu^k_{1} &= \mu_{1} + K^k_1\left(Y_1 - c_{a_{1}^k} - B_{a_1^k}\mu_{1}\right)\eqsp,\\
-%P^k_{1} &=\left(I-K^k_{1}B_{a_1^k}\right)\Sigma_1\eqsp.
-%\end{align*}
-%Update the importance weight: $\omega^k_1 \propto p(y_1|a_1^k)$.
-%}
-%{\bf Iterations}\;
-%\For{$i \gets 2$ \textbf{to} $n$} {
-%Resample the set $(\{a^k_{1:i-1}, \mu^k_{i-1}, P^k_{i-1}\})_{1\le k\le N}$ using the normalized weights $(\omega^k_{i-1})_{1\le k \le N}$.\;
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%For all $j \in \{1,\ldots, J\}$ compute
-%\[
-%\gamma_i^{j,k} = p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) q(a_{i-1}^k,j)\eqsp.
-%\]
-%Sample $a_i^k \in \{1,\ldots, J\}$ using the normalized weights $(\gamma_i^{j,k})_{1\le j\le J}$.\;
-%Update $\mu_i^k$ and $P_i^k$:
-%\begin{align*}
-%\mu^{k}_{i|i-1} &= d_{a_{i}^k} + T_{a_{i}^k}\mu^k_{i-1}\eqsp,\\
-%P^k_{i|i-1} &= T_{a_{i}^k}P^k_{i-1}T'_{a_{i}^k} + \barH_{a_{i}^k}\eqsp,\\
-%K^k_{i} &=P^k_{i|i-1}B'_{a_{i}^k}\left(B_{a_{i}^k}P^k_{i|i-1}B'_{a_{i}^k} + \barG_{a_{i}^k}\right)^{-1}\eqsp,\\
-%\mu^k_{i} &= \mu^{k}_{i|i-1} + K^k_i\left(Y_i - c_{a_{i}^k} - B_{a_{i}^k}\mu^{k}_{i|i-1}\right)\eqsp,\\
-%P^k_{i} &=\left(I-K^k_{i}B_{a_{i}^k}\right)P^k_{i|i-1}\eqsp.
-%\end{align*}
-%Update the importance weights: $\omega_i^k \propto \sum_{j=1}^J \gamma_i^{j,k}$.
-%}
-%}
-
-
-
-
-
-%The recursive updates of $(a^k_{1:i})_{1\le k \le N}$, $(\omega^k_{i})_{1\le k \le N}$,  $\mu^k_{i}$ and $P^k_{i}$ are  displayed in Algorithm~\ref{algo:forward}.
-%In the initialization step, the first weight is given, for all $1\le k \le N$, by $\omega^k_1 = p(y_1|a^k_{1})$. By \eqref{eq:model:obs}, the conditional distribution of $Y_1$ given $a_1$ is a Gaussian distribution with mean $c_{a_1}+B_{a_1}\mu_1$ and variance $B_{a_1}\Sigma_1B'_{a_1} + \barG_{a_1}$. This yields:
-%\[
-%\omega^k_{1} \propto \exp\left\{-\frac{1}{2}\normMat{B_{a_1^k}\Sigma_1B'_{a_1^k} + \barG_{a_1^k}}{Y_1-c_{a^k_1}-B_{a_1^k}\mu_1}^2\right\} \eqsp,
-%\]
-
-%By Algorithm~\ref{algo:forward}, $p^N_{}(a_{i},z_{i}|y_{1:i})$ is given by:
-%\begin{equation*}
-%p^N_{}(a_{i},z_{i}|y_{1:i}) = \sum_{k=1}^N\delta_{a^k_{i}}(a_{i})\omega^k_{i}|2\pi P^k_{i}|^{-1/2}\times \exp\left\{-\frac{1}{2}\normMat{P_{i}^k}{z_{i}-\mu^k_{i}}^2\right\}\eqsp.
-%\end{equation*}
 
 \subsection{Path-space smoother of \cite{kitagawa:1996}}
 As noted in \cite{kitagawa:1996}, a smoother may be obtained as a byproduct of the forward filter by keeping track of the genealogy of the weighted samples obtained at each time step. In this case the whole trajectories $(a^k_{1:n})_{1\le k\le n}$ are used to approximate the joint smoothing distributions :
@@ -200,21 +149,30 @@ In this case, the marginal smoothing distribution for a given time $i$ is obtain
 \[
 p^{\mathsf{Kit}}_N(a_{i}|Y_{1:n}) = \sum_{k=1}^n \omega^k_{n}\delta_{a^{\mathsf{A}^k_i}_{i}}(a_{i})\eqsp.
 \]
-This is a  poor approximation of the marginal smoothing distributions for small values of $i$ as the depletion of the particles increases with the successive resampling steps.
+This is a  poor approximation of the marginal smoothing distributions for small values of $i$ as the depletion of the particles increases with the successive resampling steps. See Section~\ref{sec:numerical:experiments} for a numerical illustration.
 
 
 \subsection{Algorithm based on the structural approximation of \cite{kim:1994}}
-Another method to approximate the smoothing distributions of the indicator variables given all the observations proposed by \cite{kim:1994} relies on an tractable approximation of $p(a_i|a_{i+1:n},y_{1:n})$. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$, approximating the filtering distributions are available. Then, the approximation of \cite{kim:1994} replaces $p(a_i|a_{i+1:n},y_{1:n})$ by
+Another method to approximate the smoothing distributions of the indicator variables given all the observations proposed by \cite{kim:1994} relies on an tractable approximation of $p(a_i|a_{i+1:n},y_{1:n})$. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$, approximating the filtering distributions are available. Then, note that, for all $1\le i\le n$,
+\[
+p(a_{i:n}|y_{1:n}) = p(a_{i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp.
+\]
+Then, the approximation of \cite{kim:1994} replaces $p(a_i|a_{i+1:n},y_{1:n})$ by
 \[
 p(a_i|a_{i+1},y_{1:i}) \propto Q(a_i,a_{i+1})p(a_i|y_{1:i})\eqsp.
 \]
-Plugging the particle approximation of $p(a_i|y_{1:i})$ in this expression provides the following procedure to sample trajectories approximatively distributed according to $p(a_{1:n}|y_{1:n})$. $\tilde{a}_{n}$ is first sampled in $\{a_n^1,\ldots,a_n^N\}$ with probabilities proportional to $(\omega_n^k)_{1\le k \le N}$. Then, for all $1\le i \le n-1$, $\tilde{a}_{i}$ is sampled in $\{a_i^1,\ldots,a_i^N\}$ with probabilities proportional to $(\omega_i^kQ(a_i^k,\tilde{a}_{i+1}))_{1\le k \le N}$. If $(\tilde{a}^k_{1:n})_{1\le k \le \tilde{N}}$ are independent copies of $\tilde{a}_{1:n}$, the SMC approximation of \cite{kim:1994} of the joint smoothing distribution of the indicator variables is:
+Plugging the particle approximation of $p(a_i|y_{1:i})$ in this expression provides the following procedure to sample trajectories approximatively distributed according to $p(a_{1:n}|y_{1:n})$:
+\begin{enumerate}[-]
+\item $\tilde{a}_{n}$ is first sampled in $\{a_n^1,\ldots,a_n^N\}$ with probabilities proportional to $(\omega_n^k)_{1\le k \le N}$. 
+\item Then, for all $1\le i \le n-1$, $\tilde{a}_{i}$ is sampled in $\{a_i^1,\ldots,a_i^N\}$ with probabilities proportional to $(\omega_i^kQ(a_i^k,\tilde{a}_{i+1}))_{1\le k \le N}$. 
+\end{enumerate}
+If $(\tilde{a}^k_{1:n})_{1\le k \le \tilde{N}}$ are independent copies of $\tilde{a}_{1:n}$, the SMC approximation of \cite{kim:1994} of the joint smoothing distribution of the indicator variables is:
 \[
 p^{\mathsf{Kim}}_N(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \delta_{\tilde{a}^{k}_{1:n}}(a_{1:n})\eqsp.
 \]
 
 \subsection{FFBS based algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015}}
-\cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a Rao-Blackwellised procedure to sample the indicator variables backward in time following the same steps as in the FFBS algorithm. The algorithm relies on the decomposition given, for all $1\le i \le n-1$, by:
+\cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a Rao-Blackwellised procedure to sample the indicator variables backward in time following the same steps as in the FFBS algorithm without using the approximation of \cite{kim:1994}. The algorithm relies on the decomposition given, for all $1\le i \le n-1$, by:
 \[
 p(a_{1:n}|y_{1:n}) = p(a_{1:i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp,
 \]
@@ -228,15 +186,15 @@ p^N(a_{1:i}|a_{i+1:n},y_{1:n}) = \sum_{k=1}^N \tilde{\omega}^k_{i|n}\delta_{a^k_
 \]
 with $\tilde{\omega}^k_{i|n} \propto \omega_i^k p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. Then, a trajectory $\tilde{a}_{1:n}$ approximatively distributed according to $p(a_{1:n}|y_{1:n})$ may be sampled following these steps:
 \begin{enumerate}[-]
-\item Set $\tilde{a}_n= a_n^k$ with probability $\omega_n^k$, $1\le k \le N$.
-\item For all $1\le i\le n-1$, set $\tilde{a}_i = a_i^k$ with probability $\tilde{\omega}_i^k$, $1\le k \le N$.
+\item Set $\tilde{a}_n= a_n^k$ with probabilities proportional to $(\omega_n^k)_{1\le k \le N}$.
+\item For all $1\le i\le n-1$, set $\tilde{a}_i = a_i^k$ with probabilities proportional to $(\tilde{\omega}_i^k)_{1\le k \le N}$.
 \end{enumerate}
-This algorithm requires to compute the quantity  $p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. As noted by \cite{lindsten:bunch:sarkka:schon:godsill:2015}, this predictive quantity is available analytically using backward Kalman filtering techniques from time $n$ to time $i$. However, this has to be done for each trajectory $a^k_{1:i}$, $1\le k \le N$, which leads to an algorithm with a prohibitive computational complexity. \cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a procedure computationally less intensive by noting that:
+This algorithm requires to compute the quantity  $p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. As noted by \cite{lindsten:bunch:sarkka:schon:godsill:2015}, this predictive quantity is available analytically using backward Kalman filtering techniques. However, this has to be done for each trajectory $(a^k_{1:i})_{1\le k \le N}$, which leads to an algorithm with a prohibitive computational complexity. \cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a procedure computationally less intensive by noting that:
 \begin{equation}
 \label{eq:FFBS:incremental}
 p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i}) = \int p(y_{i+1:n},a_{i+1:n}|z_i,a^k_{i})p(z_{i}|a^k_{1:i},y_{1:i})\rmd z_i\eqsp,
 \end{equation}
-which is the two-filter decomposition of the smoothing distribution. By  \cite{lindsten:bunch:sarkka:schon:godsill:2015},
+which is similar to the two-filter decomposition of the smoothing distribution. By  \cite{lindsten:bunch:sarkka:schon:godsill:2015},
 \[
 p(y_{i+1:n},a_{i+1:n}|z_i,a_{i}) \propto Q(a_i,a_{i+1}) \exp\left\{-(z_i'\Omega_iz_i-2\lambda_i'z_i)/2\right\}\eqsp,
 \]
@@ -244,12 +202,12 @@ where the proportionality is with respect to $(a_i,z_i)$ and
 \[
 p(y_{i:n},a_{i+1:n}|z_i,a_{i}) \propto \exp\left\{-(z_i'\hat{\Omega}_iz_i-2\hat{\lambda}_i'z_i)/2\right\}\eqsp,
 \]
-where the proportionality is with respect to $z_i$. 
+where the proportionality is with respect to $z_i$. These quantities may be computed recursively backward in time with:
 \begin{align*}
 \hat{\Omega}_n &= B'_{a_n}\barG^{-1}_{a_n}B_{a_n}\eqsp,\\
 \hat{\lambda}_n &=B'_{a_n}\barG^{-1}_{a_n}(y_n-c_{a_n})\eqsp.
 \end{align*}
-Then, for $1\le i\le n-1$, define $m_{i+1} = \hat{\lambda}_{i+1} - \hat{\Omega}_{i+1}d_{a_{i+1}}$ and $M_{i+1} = H_{a_{i+1}}'\hat{\Omega}_{i+1}H_{a_{i+1}} + I$. Then,
+Then, for $1\le i\le n-1$, define $m_{i+1} = \hat{\lambda}_{i+1} - \hat{\Omega}_{i+1}d_{a_{i+1}}$ and $M_{i+1} = H_{a_{i+1}}'\hat{\Omega}_{i+1}H_{a_{i+1}} + I$ and write
 \begin{align*}
 \Omega_i &= T'_{a_{i+1}}(I-\hat{\Omega}_{i+1}H_{a_{i+1}}M^{-1}_{i+1}H'_{a_{i+1}})\hat{\Omega}_{i+1}T_{a_{i+1}}\eqsp,\\
 \lambda_i &=T'_{a_{i+1}}(I-\hat{\Omega}_{i+1}H_{a_{i+1}}M^{-1}_{i+1}H'_{a_{i+1}})m_{i+1}\eqsp.
@@ -263,67 +221,70 @@ Then, by \eqref{eq:FFBS:incremental},
 \[
 p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})\propto Q(a_i^k,a_{i+1})|\Lambda_i|^{-1/2}\exp\left\{\eta_i/2\right\}\eqsp,
 \]
-where the proportionality is with respect to $a^k_{1:i}$ and $\Lambda_i = (\Gamma_i^k)'\Omega_i\Gamma_i^k + I$ and $\eta_i = \|\mu_i^k\|^2_{\Omega^{-1}_i} - 2\lambda'_i\mu_i^k-\|(\Gamma_i^k)'(\lambda_i-\Omega_i\mu_i^k)\|^2_{\Lambda_i}$. These backward simulation steps are summarized in Algorithm~\ref{algo:FFBS}.
+where the proportionality is with respect to $a^k_{1:i}$ and $\Lambda_i = (\Gamma_i^k)'\Omega_i\Gamma_i^k + I$ and $\eta_i = \|\mu_i^k\|^2_{\Omega^{-1}_i} - 2\lambda'_i\mu_i^k-\|(\Gamma_i^k)'(\lambda_i-\Omega_i\mu_i^k)\|^2_{\Lambda_i}$ where $P_i^k = \Gamma_i^k(\Gamma_i^k)'$.
+If $(\tilde{a}^k_{1:n})_{1\le k \le \tilde{N}}$ are independent copies of $\tilde{a}_{1:n}$, the SMC approximation of \cite{lindsten:bunch:sarkka:schon:godsill:2015} of the joint smoothing distribution of the indicator variables is:
+\[
+p^{\mathsf{Lbscg}}_N(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \delta_{\tilde{a}^{k}_{1:n}}(a_{1:n})\eqsp.
+\]
 
 \subsection{Rao Blackwellised Two-filter Smoother}
-Following \cite{briers:doucet:maskell:2010}, this paper proposes a generalized two-filter algorithm which exploits the specific properties of the model defined by \eqref{eq:model:state} and \eqref{eq:model:obs}. Conditional on $(a_i)_{1\le i\le n}$, these equations define a linear Gaussian model for which analytic computations may be performed to marginalize the states $(Z_{i})_{1\le i \le n}$ in order to reduce the the variance of SMC methods. For $3\le i \le n-1$, our proposed algorithm relies on the explicit marginalization:
+Following \cite{briers:doucet:maskell:2010}, this paper proposes a generalized two-filter algorithm which exploits the specific properties of the model defined by \eqref{eq:model:state} and \eqref{eq:model:obs}. Contrary to the previous methods, two-filter based smoothers are designed to compute approximations of marginal smoothing distributions (usually the posterior distribution of one or two consecutive  indicator variables given all the observations). 
+%Conditional on $(a_i)_{1\le i\le n}$, these equations define a linear Gaussian model for which analytic computations may be performed to marginalize the states $(Z_{i})_{1\le i \le n}$ in order to reduce the the variance of SMC methods. 
+For $3\le i \le n-1$, our proposed algorithm relies on the explicit marginalization:
 \begin{equation}
 \label{eq:dens:bwd_fwd}
 %\phi^n_{i}(a_{i-1:i},z_{i-1:i})  =  \sum_{a_{i-2}}\sum_{a_{i+1}} \int_{z_{i-2}} \int_{z_{i+1}} \psi^n_{i}(a_{i-2:i+1},z_{i-2:i+1})\rmd z_{i-2}\rmd z_{i+1}\eqsp.
-\phi^n_{i}(a_{i-1:i},z_{i-1:i})  =  \sum_{a_{i-2}}\sum_{a_{i+1}} \int_{z_{i-2}} \int_{z_{i+1}} \psi^n_{i}(a_{i-2:i+1},z_{i-2:i+1})\rmd z_{i-2}\rmd z_{i+1}\eqsp.
+\phi^n_{i}(a_{i},z_{i})  =  \sum_{a_{i-1}}\sum_{a_{i+1}} \int_{z_{i-1}} \int_{z_{i+1}} \psi^n_{i}(a_{i-1:i+1},z_{i-1:i+1})\rmd z_{i-2}\rmd z_{i+1}\eqsp.
 \end{equation}
-where $\psi^n_{i}(a_{i-2:i+1},z_{i-2:i+1})$ is the smoothing distribution of the hidden regimes and states between time indices $i-2$ and $i+1$.
+where $\psi^n_{i}(a_{i-1:i+1},z_{i-1:i+1})$ is the smoothing distribution of the hidden regimes and states between time indices $i-1$ and $i+1$.
 It may be decomposed as follows:
 \begin{multline*}
-\psi^n_{i}(a_{i-2:i+1},z_{i-2:i+1}) \propto p_{}(y_{i+1:n}|a_{i+1},z_{i+1})p_{}(a_{i-2},z_{i-2}|y_{1:i-2})Q(a_{i-2},a_{i-1})\\
-\times \left\{\prod_{k=i}^{i+1} m_{}(a_{k-1},z_{k-2};z_{k-1})g_{}(a_{k-1},z_{k-1};y_{k-1})Q(a_{k-1},a_k)\right\}m_{}(a_{i+1},z_{i};z_{i+1})\eqsp,
+\psi^n_{i}(a_{i-1:i+1},z_{i-1:i+1}) \propto p_{}(y_{i+1:n}|a_{i+1},z_{i+1})p_{}(a_{i-1},z_{i-1}|y_{1:i-1})Q(a_{i-1},a_{i})m_{}(a_{i},z_{i-1};z_{i})\\
+\times g_{}(a_{i},z_{i};y_{i})Q(a_{i},a_{i+1})m_{}(a_{i+1},z_{i};z_{i+1})\eqsp,
 \end{multline*}
-where the proportionality is with respect to $(a_{i-2:i+1},z_{i-2:i+1})$. Then, by \eqref{eq:dens:bwd_fwd}, the smoothing distribution $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ may be written as
-\begin{multline}
+where the proportionality is with respect to $(a_{i-1:i+1},z_{i-1:i+1})$. Then, by \eqref{eq:dens:bwd_fwd}, the smoothing distribution $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ may be written as
+\begin{equation}
 \label{eq:smoothing}
-\phi^n_{i}(a_{i-1:i},z_{i-1:i})  \propto r_{i}(a_{i-1},z_{i-1},y_{1:i-2})m_{}(a_{i},z_{i-1};z_i)g_{}(a_{i-1},z_{i-1};y_{i-1})Q(a_{i-1},a_i)\\
-\times g_{}(a_{i},z_{i};y_{i})t_{i}(a_i,z_i,y_{i+1:n})\eqsp,
-\end{multline}
-where $m$ and $g$ are defined in \eqref{eq:definition-m} and \eqref{eq:definition-g},  $Q$ is the transition matrix of the
-Markov chain $\{a_k, k \geq 0\}$ and
+\phi^n_{i}(a_{i},z_{i})  \propto r_{i}(a_{i},z_{i},y_{1:i-1})g_{}(a_{i},z_{i};y_{i})t_{i}(a_i,z_i,y_{i+1:n})\eqsp,
+\end{equation}
+where $m$ and $g$ are defined in \eqref{eq:definition-m} and \eqref{eq:definition-g} and
 \begin{align}
-r_{i}(a_{i-1},z_{i-1},y_{1:i-2}) &= p_{}(a_{i-1},z_{i-1}|y_{1:i-2})\eqsp,\\
-&=\sum_{a_{i-2}}\int_{z_{i-2}}p_{}(a_{i-2},z_{i-2}|y_{1:i-2})m_{}(a_{i-1},z_{i-2};z_{i-1})Q(a_{i-2},a_{i-1}) \rmd z_{i-2}\eqsp,\label{eq:smooth:r}\\
-t_{i}(a_i,z_i,y_{i:n}) &= \sum_{a_{i+1}}\int_{z_{i+1}}m_{}(a_{i+1},z_{i};z_{i+1})Q(a_{i},a_{i+1})p_{}(y_{i+1:n}|a_{i+1},z_{i+1}) \rmd z_{i+1}\eqsp.\label{eq:smooth:t}
+r_{i}(a_{i},z_{i},y_{1:i-1}) &= p_{}(a_{i},z_{i}|y_{1:i-1})\eqsp,\\
+&=\sum_{a_{i-1}}\int_{z_{i-1}}p_{}(a_{i-1},z_{i-1}|y_{1:i-1})m_{}(a_{i},z_{i-1};z_{i})Q(a_{i-1},a_{i}) \rmd z_{i-1}\eqsp,\label{eq:smooth:r}\\
+t_{i}(a_i,z_i,y_{i+1:n}) &= \sum_{a_{i+1}}\int_{z_{i+1}}m_{}(a_{i+1},z_{i};z_{i+1})Q(a_{i},a_{i+1})p_{}(y_{i+1:n}|a_{i+1},z_{i+1}) \rmd z_{i+1}\eqsp.\label{eq:smooth:t}
 \end{align}
-In the forward pass described in Section~\ref{sec:forward}, a set of possible sequences of states $a_{1:i-2}^k$ associated with importance weights $\omega_{i-2}^k$, $1\le k\le N$ are sampled to approximate $p_{}(a_{i-2},z_{i-2}|y_{1:i-2})$. 
-Plugging this approximation into \eqref{eq:smooth:r} provides a non normalized approximation $r^N_{i}(a_{i-1},z_{i-1},y_{1:i-2})$ of $r_{i}(a_{i-1},z_{i-1},y_{1:i-2})$ integrating over all possible choices of $(a_{i-2},z_{i-2})$:
+In the forward pass described in Section~\ref{sec:forward}, a set of possible sequences of indicator variables $a_{1:i-1}^k$ associated with importance weights $\omega_{i-1}^k$, $1\le k\le N$ are sampled to approximate $p_{}(a_{i-1},z_{i-1}|y_{1:i-1})$. 
+Plugging this approximation into \eqref{eq:smooth:r} provides a non normalized approximation $r^N_{i}(a_{i},z_{i},y_{1:i-1})$ of $r_{i}(a_{i},z_{i},y_{1:i-1})$ integrating over all possible choices of $(a_{i-1},z_{i-1})$:
 \[
-r^N_{i}(a_{i-1},z_{i-1},y_{1:i-2}) = \sum_{a_{i-2}}\int_{z_{i-2}}p^N_{}(a_{i-2},z_{i-2}|y_{1:i-2})m_{}(a_{i-1},z_{i-2};z_{i-1})Q(a_{i-2},a_{i-1}) \rmd z_{i-2}\eqsp.
+r^N_{i}(a_{i},z_{i},y_{1:i-1}) = \sum_{a_{i-1}}\int_{z_{i-1}}p^N_{}(a_{i-1},z_{i-1}|y_{1:i-1})m_{}(a_{i},z_{i-1};z_{i})Q(a_{i-1},a_{i}) \rmd z_{i-2}\eqsp.
 \]
 Define
 \begin{align*}
-\Upsilon^k_{i-2}(a_{i-1}) &\eqdef (P^k_{i-2})^{-1} + T'_{a_{i-1}}\barH_{a_{i-1}}^{-1}T_{a_{i-1}}\eqsp,\\
-%\upsilon^k_{i-2}(a_{i-1})&\eqdef (P^k_{i-2})^{-1}\mu^k_{i-2} +  T'_{a_{i-1}}\barH_{a_{i-1}}^{-1}(z_{i-1}-d_{a_{i-1}})\eqsp,\\
-\upsilon^k_{i-2}(a_{i-1})&\eqdef \barH_{a_{i-1}}^{-1}T_{a_{i-1}}(\Upsilon^k_{i-2})^{-1}(a_{i-1})(P^k_{i-2})^{-1}\mu^k_{i-2}\eqsp,\\
-\Omega^k_{i-2}(a_{i-1}) &= \left(\barH_{a_{i-1}}^{-1} - \barH_{a_{i-1}}^{-1}T_{a_{i-1}}(\Upsilon^k_{i-2})^{-1}(a_{i-1})T'_{a_{i-1}}\barH_{a_{i-1}}^{-1}\right)^{-1}\eqsp,\\
-r_{i-2}^k(a_{i-1}) &= \upsilon^k_{i-2}(a_{i-1})+(\Omega^k_{i-2}(a_{i-1}))^{-1}d_{a_{i-1}}\eqsp,\\
-\omega_{\mathsf{f},i}^k(a_{i-1}) &\eqdef \omega^k_{i-2}Q(a^k_{i-2},a_{i-1})\left|P^k_{i-2}\right|^{-1/2}\left|\Upsilon^k_{i-2}(a_{i-1})\right|^{-1/2} \left|2\pi\barH_{a_{i-1}}\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-2}(a_{i-1})}{d_{a_{i-1}}}^2\right\}\\
-&\hspace{1.5cm}\times\exp\left\{ -\frac{1}{2}\normMat{P_{i-2}^k}{\mu^k_{i-2}}^2+\frac{1}{2}\normMat{P_{i-2}^k\Upsilon^k_{i-2}(a_{i-1})P_{i-2}^k}{\mu^k_{i-2}}^2 - (\upsilon^k_{i-2})'(a_{i-1})d_{a_{i-1}} \right\}\eqsp.
+\Upsilon^k_{i-1}(a_{i}) &\eqdef (P^k_{i-1})^{-1} + T'_{a_{i}}\barH_{a_{i}}^{-1}T_{a_{i}}\eqsp,\\
+\upsilon^k_{i-1}(a_{i})&\eqdef \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})(P^k_{i-1})^{-1}\mu^k_{i-1}\eqsp,\\
+\Omega^k_{i-1}(a_{i}) &= \left(\barH_{a_{i}}^{-1} - \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})T'_{a_{i}}\barH_{a_{i}}^{-1}\right)^{-1}\eqsp,\\
+r_{i-1}^k(a_{i}) &= \upsilon^k_{i-1}(a_{i})+(\Omega^k_{i-1}(a_{i}))^{-1}d_{a_{i}}\eqsp,\\
+\omega_{\mathsf{f},i}^k(a_{i}) &\eqdef \omega^k_{i-1}Q(a^k_{i-1},a_{i})\left|P^k_{i-1}\right|^{-1/2}\left|\Upsilon^k_{i-1}(a_{i})\right|^{-1/2} \left|2\pi\barH_{a_{i}}\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{d_{a_{i}}}^2\right\}\\
+&\hspace{1.5cm}\times\exp\left\{ -\frac{1}{2}\normMat{P_{i-1}^k}{\mu^k_{i-1}}^2+\frac{1}{2}\normMat{P_{i-1}^k\Upsilon^k_{i-1}(a_{i})P_{i-1}^k}{\mu^k_{i-1}}^2 - (\upsilon^k_{i-1})'(a_{i})d_{a_{i}} \right\}\eqsp.
 \end{align*}
 Then,
 \begin{equation}
 \label{eq:rN}
-r^N_{i}(a_{i-1},z_{i-1},y_{1:i-2}) = \sum_{k=1}^N \omega_{\mathsf{f},i}^k(a_{i-1})\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-2}(a_{i-1})}{z_{i-1}}^2+z'_{i-1}r_{i-2}^k(a_{i-1})\right\}\eqsp.
+r^N_{i}(a_{i},z_{i},y_{1:i-1}) = \sum_{k=1}^N \omega_{\mathsf{f},i}^k(a_{i})\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{z_{i}}^2+z'_{i}r_{i-1}^k(a_{i})\right\}\eqsp.
 %\times\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-2}(a_{i-1})}{z_{i-1}-d_{a_{i-1}}}^2\right\}\eqsp.%q(a^k_{i-2},a_{i-1})\omega^k_{i-2}\left|P^k_{i-2}\right|^{-1/2}\left|\Upsilon^k_{i-2}(a_{i-1})\right|^{-1/2}\exp\left\{ -\frac{1}{2}\normMat{P_{i-2}^k}{\mu^k_{i-2}}^2\right\}\\
 %\times \left|2\pi\barH_{a_{i-1}}\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\barH_{a_{i-1}}}{z_{i-1}-d_{a_{i-1}}}^2\right\}\exp\left\{\frac{1}{2}(\upsilon^k_{i-2})'(a_{i-1})(\Upsilon^k_{i-2})^{-1}(a_{i-1})\upsilon^k_{i-2}(a_{i-1})\right\}\eqsp.
 \end{equation}
 
-The backward pass described below produces a sequence of states $\tilde{a}_{i+1:n}^{\ell}$ associated with importance weights $\tilde{\omega}_{i+1}^{\ell}$, $1\le \ell\le N$ which are used to approximate $p_{}(y_{i+1:n}|a_{i+1},z_{i+1})$. Plugging this approximation into \eqref{eq:smooth:t} provides a non normalized approximation $t^N_{i}(a_i,z_i,y_{i:n})$ of $t_{i}(a_i,z_i,y_{i:n})$ integrating over all possible choices $(a_{i+1},z_{i+1})$.
+The backward pass described below produces a sequence of states $\tilde{a}_{i+1:n}^{\ell}$ associated with importance weights $\tilde{\omega}_{i+1}^{\ell}$, $1\le \ell\le N$ which are used to approximate $p_{}(y_{i+1:n}|a_{i+1},z_{i+1})$. Plugging this approximation into \eqref{eq:smooth:t} provides a non normalized approximation $t^N_{i}(a_i,z_i,y_{i+1:n})$ of $t_{i}(a_i,z_i,y_{i+1:n})$ integrating over all possible choices $(a_{i+1},z_{i+1})$.
 
 
-These steps are then combined to form the normalized SMC approximation $\phi^{n,N}_{i}(a_{i-1:i},z_{i-1:i})$ of $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ using \eqref{eq:smoothing}. As $r^N_{i}(a_{i-1},z_{i-1},y_{1:i-2})$ and $t^N_{i}(a_i,z_i,y_{i:n})$ are not normalized, the normalization of $\phi^{n,N}_{i}(a_{i-1:i},z_{i-1:i})$ is obtained by integrating over the states $a_{i-1:i},z_{i-1:i}$, when $r_{i}(a_{i-1},z_{i-1},y_{1:i-2})$ and $t_{i}(a_i,z_i,y_{i:n})$ are replaced by $r^N_{i}(a_{i-1},z_{i-1},y_{1:i-2})$ and $t^N_{i}(a_i,z_i,y_{i:n})$ in \eqref{eq:smoothing}. %These combination and normalization steps are given in Appendix~\ref{sec:approx:smooth}.
-Our procedure allows to construct sequence of regimes with non-degenerated importance weights in the combination step. This procedure improves significantly \cite{briers:doucet:maskell:2010} where no marginalization of $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ over the states at times $i-2$ and $i+1$ is performed and where the proposed forward and backward paths are directly merged. This method often leads to importance weights which are close to be numerically degenerated.
+These steps are then combined to form a non normalized SMC approximation of $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ using \eqref{eq:smoothing}. As $r^N_{i}(a_{i},z_{i},y_{1:i-1})$ and $t^N_{i}(a_i,z_i,y_{i+1:n})$ are not normalized, the normalization of the SMC approximation of $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$ is obtained by integrating over the states $a_{i},z_{i}$, when $r_{i}(a_{i},z_{i},y_{1:i-1})$ and $t_{i}(a_i,z_i,y_{i+1:n})$ are replaced by $r^N_{i}(a_{i},z_{i},y_{1:i-1})$ and $t^N_{i}(a_i,z_i,y_{i+1:n})$ in \eqref{eq:smoothing}. %These combination and normalization steps are given in Appendix~\ref{sec:approx:smooth}.
+Our procedure allows to construct sequence of regimes with non-degenerated importance weights in the combination step. This procedure improves significantly \cite{briers:doucet:maskell:2010} where no marginalization of $\phi^n_{i}(a_{i},z_{i})$ over the states at times $i-1$ and $i+1$ is performed and where the proposed forward and backward paths are directly merged. This method often leads to importance weights which are close to be numerically degenerated.
 
 %\subsection{Backward filter}
 %\label{sec:backward}
 %This section displays a SMC algorithm to approximate $t_{i}(a_i,z_i,y_{i:n})$ using backward recursions. 
-As the function $(a_{i+1},z_{i+1})\mapsto p_{}(y_{i+1:n}|a_{i+1},z_{i+1})$ is not a probability density function it is not possible to use SMC samples to approximate it. The backward filter relies on artificial densities to introduce a surrogate target density function which may be approximated using SMC methods. Following \cite{briers:doucet:maskell:2010}, for any probability densities $(\gamma^{}_{i})_{1\le i \le n}$, define the following joint probability densities:
+As the function $(a_{i+1},z_{i+1})\mapsto p_{}(y_{i+1:n}|a_{i+1},z_{i+1})$ is not a probability density function, it is not possible to use SMC samples to approximate it. The backward filter relies on artificial densities to introduce a surrogate target density function which may be approximated using SMC methods. Following \cite{briers:doucet:maskell:2010}, for any probability densities $(\gamma^{}_{i})_{1\le i \le n}$, define the following joint probability densities:
 \[
 \tilde{p}_{n}(a_n,z_n,y_n) \eqdef \gamma^{}_{n}(a_n,z_n)g_{}(a_n,z_n;y_n)\eqsp,\quad \tilde{p}_{n}(y_n)\eqdef \sum_{a_n=1}^J\int \gamma^{}_{n}(a_n,z_n)g_{}(a_n,z_n;y_n)\rmd z_n\eqsp,
 \]
@@ -1159,5 +1120,5 @@ For $1\le \ell \le N$, set:
 
 \bibliographystyle{alpha}
 
-\bibliography{./CLGM_bib}
+\bibliography{./clgm_bib}
 \end{document} 
