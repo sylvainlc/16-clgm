@@ -12,7 +12,7 @@
 \maketitle
 
 \begin{abstract}
-This paper focuses on Sequential Monte Carlo based approximations of smoothing distributions in conditionally linear and Gaussian state spaces. Only a few methods have been proposed to reduce Monte Carlo variance of smoothers with Rao Blackwellisation steps for conditionally linear and Gaussian models. The most widely used Rao Blackwellised Sequential Monte Carlo smoothers introduced in \cite{kim:1994,lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} are based on the Forward Backward decomposition of the marginal smoothing distribution. In \cite{kim:1994}, a structural approximation of the model is used to simplify the backward pass while \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} use Rao Blackwellisation steps without any approximation in both forward and backward passes. In this paper, these algorithms are compared to an extension of the Two-filter based algorithm of \cite{briers:doucet:maskell:2010} with additional explicit Rao Blackwellised steps to improve its performance. The procedures are applied to commodity markets which are described using a two factor model based on the spot price and a convenience yield. Parameters are estimated using  an Expectation Maximization and the performance of the proposed procedure is assessed with Chicago Mercantile Exchange crude oil data.
+This paper focuses on Sequential Monte Carlo based approximations of smoothing distributions in conditionally linear and Gaussian state spaces. Only a few methods have been proposed to reduce Monte Carlo variance of smoothers with Rao Blackwellisation steps for these models. The most widely used Rao Blackwellised Sequential Monte Carlo smoothers introduced in \cite{kim:1994,lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} are based on the Forward Backward decomposition of the marginal smoothing distribution. In \cite{kim:1994}, a structural approximation of the model is used to simplify the backward pass while \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} use Rao Blackwellisation steps without any approximation in both forward and backward passes. In this paper, these algorithms are compared to an extension of the Two-filter based algorithm of \cite{briers:doucet:maskell:2010} with additional explicit Rao Blackwellised steps to improve its performance. The procedures are applied to commodity markets which are described using a two factor model based on the spot price and a convenience yield. Parameters are estimated using  an Expectation Maximization and the performance of the proposed procedure is assessed with Chicago Mercantile Exchange crude oil data.
 
 
 %In this paper, commodity markets are described using a two factor model based on the spot price and a convenience yield representing the benefit or cost required for holding the physical commodity. It is assumed that the market structure has different regimes which depend on existing stocks and contracts or other externalities. These different regimes are modeled using a finite state space unobserved Markov chain, each regime corresponding to an  equilibrium behavior of the spot price and the convenience yield. At each time step, it is assumed that noisy observations of future contracts are available which leads to represent commodity markets dynamics using a conditionally linear and Gaussian state space model. We propose a new algorithm to approximate the conditional distributions of the states (spot, convenience yield and regime indicator) given a set of observations. These approximations are obtained combining Sequential Monte Carlo methods and Kalman smoothing techniques  and may be used to detect significant regime switching times and to estimate model parameters with an Expectation Maximization based algorithm. The performance of the proposed procedure is assessed with Chicago Mercantile Exchange crude oil data.
@@ -260,16 +260,20 @@ t_{i}(a_i,z_i,y_{i+1:n}) &= \sum_{a_{i+1}}\int_{z_{i+1}}m_{}(a_{i+1},z_{i};z_{i+
 In the forward pass described in Section~\ref{sec:forward}, a set of possible sequences of indicator variables $a_{1:i-1}^k$ associated with importance weights $\omega_{i-1}^k$, $1\le k\le N$ are sampled to approximate $p_{}(a_{i-1},z_{i-1}|y_{1:i-1})$. 
 Plugging this approximation into \eqref{eq:smooth:r} provides a non normalized approximation $r^N_{i}(a_{i},z_{i},y_{1:i-1})$ of $r_{i}(a_{i},z_{i},y_{1:i-1})$ integrating over all possible choices of $(a_{i-1},z_{i-1})$:
 \[
-r^N_{i}(a_{i},z_{i},y_{1:i-1}) = \sum_{a_{i-1}}\int_{z_{i-1}}p^N_{}(a_{i-1},z_{i-1}|y_{1:i-1})m_{}(a_{i},z_{i-1};z_{i})Q(a_{i-1},a_{i}) \rmd z_{i-2}\eqsp.
+r^N_{i}(a_{i},z_{i},y_{1:i-1}) = \sum_{a_{i-1}}\int_{z_{i-1}}p^N_{}(a_{i-1},z_{i-1}|y_{1:i-1})m_{}(a_{i},z_{i-1};z_{i})Q(a_{i-1},a_{i}) \rmd z_{i-1}\eqsp.
 \]
 Define
+%\begin{align*}
+%\Upsilon^k_{i-1}(a_{i}) &= (P^k_{i-1})^{-1} + T'_{a_{i}}\barH_{a_{i}}^{-1}T_{a_{i}}\eqsp,\\
+%\upsilon^k_{i-1}(a_{i})&= \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})(P^k_{i-1})^{-1}\mu^k_{i-1}\eqsp,\\
+%\Omega^k_{i-1}(a_{i}) &= \left(\barH_{a_{i}}^{-1} - \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})T'_{a_{i}}\barH_{a_{i}}^{-1}\right)^{-1}\eqsp,\\
+%r_{i-1}^k(a_{i}) &= \upsilon^k_{i-1}(a_{i})+(\Omega^k_{i-1}(a_{i}))^{-1}d_{a_{i}}\eqsp,\\
+%\omega_{\mathsf{f},i}^k(a_{i}) &= \omega^k_{i-1}Q(a^k_{i-1},a_{i})\left|P^k_{i-1}\right|^{-1/2}\left|\Upsilon^k_{i-1}(a_{i})\right|^{-1/2} \left|2\pi\barH_{a_{i}}\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{d_{a_{i}}}^2\right\}\\
+%&\hspace{1.5cm}\times\exp\left\{ -\frac{1}{2}\normMat{P_{i-1}^k}{\mu^k_{i-1}}^2+\frac{1}{2}\normMat{P_{i-1}^k\Upsilon^k_{i-1}(a_{i})P_{i-1}^k}{\mu^k_{i-1}}^2 - (\upsilon^k_{i-1})'(a_{i})d_{a_{i}} \right\}\eqsp.
+%\end{align*}
 \begin{align*}
-\Upsilon^k_{i-1}(a_{i}) &= (P^k_{i-1})^{-1} + T'_{a_{i}}\barH_{a_{i}}^{-1}T_{a_{i}}\eqsp,\\
-\upsilon^k_{i-1}(a_{i})&= \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})(P^k_{i-1})^{-1}\mu^k_{i-1}\eqsp,\\
-\Omega^k_{i-1}(a_{i}) &= \left(\barH_{a_{i}}^{-1} - \barH_{a_{i}}^{-1}T_{a_{i}}(\Upsilon^k_{i-1})^{-1}(a_{i})T'_{a_{i}}\barH_{a_{i}}^{-1}\right)^{-1}\eqsp,\\
-r_{i-1}^k(a_{i}) &= \upsilon^k_{i-1}(a_{i})+(\Omega^k_{i-1}(a_{i}))^{-1}d_{a_{i}}\eqsp,\\
-\omega_{\mathsf{f},i}^k(a_{i}) &= \omega^k_{i-1}Q(a^k_{i-1},a_{i})\left|P^k_{i-1}\right|^{-1/2}\left|\Upsilon^k_{i-1}(a_{i})\right|^{-1/2} \left|2\pi\barH_{a_{i}}\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{d_{a_{i}}}^2\right\}\\
-&\hspace{1.5cm}\times\exp\left\{ -\frac{1}{2}\normMat{P_{i-1}^k}{\mu^k_{i-1}}^2+\frac{1}{2}\normMat{P_{i-1}^k\Upsilon^k_{i-1}(a_{i})P_{i-1}^k}{\mu^k_{i-1}}^2 - (\upsilon^k_{i-1})'(a_{i})d_{a_{i}} \right\}\eqsp.
+\Omega^k_{i-1}(a_{i}) &= T_{a_{i}}P^k_{i-1}T'_{a_{i}} + \barH_{a_{i}}\eqsp,\;\mu^k_{i-1}(a_{i}) = d_{a_{i}} + T_{a_{i}}\mu^k_{i-1}\eqsp,\;r_{i-1}^k(a_{i}) = (\Omega^k_{i-1}(a_{i}))^{-1}\mu^k_{i-1}(a_{i})\eqsp,\\
+\omega_{\mathsf{f},i}^k(a_{i}) &= \omega^k_{i-1}Q(a^k_{i-1},a_{i}) \left|2\pi \Omega^k_{i-1}(a_{i})\right|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{\mu^k_{i-1}(a_{i})}^2\right\}\eqsp.
 \end{align*}
 Then,
 \begin{equation}
