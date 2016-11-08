@@ -103,20 +103,35 @@ All the algorithms considered in this paper are based on forward-backward or two
 
 \subsection{Forward filter}
 \label{sec:forward}
-The SMC approximation $p^N_{}(a_{1:i},z_{i}|y_{1:i})$ of $p_{}(a_{1:i},z_{i}|y_{1:i})$ may be obtained using the standard Rao Blackwellised  algorithm given in \cite{chen:liu:2000}. The procedure produces a sequence of trajectories $(a^k_{1:i})_{1\le k \le N}$ associated with importance weights $(\omega^k_{i})_{1\le k \le N}$ used to define the following approximation of $p_{}(a_{1:i},z_{i}|y_{1:i})$:
+The SMC approximation $p^N_{}(a_{1:i},z_{i}|y_{1:i})$ of $p_{}(a_{1:i},z_{i}|y_{1:i})$ may be obtained using a standard Rao Blackwellised  algorithm. The procedure produces a sequence of trajectories $(a^k_{1:i})_{1\le k \le N}$ associated with importance weights $(\omega^k_{i})_{1\le k \le N}$ used to define the following approximation of $p_{}(a_{1:i},z_{i}|y_{1:i})$:
 \[
 p^N_{}(a_{1:i},z_{i}|y_{1:i}) = \sum_{k=1}^N\delta_{a^k_{1:i}}(a_{1:i})\,\omega^k_{i}\,p_{}(z_{i}|a^k_{1:i},y_{1:i})\eqsp.
 \]
 In this equation, the conditional distribution of the hidden state $z_{i}$ given the observations $y_{1:i}$ and a trajectory $a^k_{1:i}$ is a Gaussian distribution whose mean $\mu^k_{i}$ and variance $P^k_{i}$ may be obtained by using the Kalman filter's update. 
-\paragraph{Initialization}
-At time $i=1$, $(a^k_1)_{1\le k \le N}$ are sampled independently in $\{1,\ldots,J\}$ with probabilities proportional to $(\pi_j)_{1\le j\le J}$. Then, $\mu_1^k$ and $P_1^k$ are computed using a Kalman filter:
+
+\vspace{.2cm}
+
+\noindent\textbf{Initialization}\\
+At time $i=1$, write, for all $1\le j \le J$, 
+\[
+\mu^j_{1|0} = c_{j}+B_{j}\mu_1\;\;\mbox{and}\;\;P_{1|0}^j =B_{j}\Sigma_1B'_{j} + \barG_{j}\eqsp.
+\]
+$(a^k_1)_{1\le k \le N}$ are sampled independently in $\{1,\ldots,J\}$ with probabilities proportional to 
+\[
+\pi_j p(a_1=j|y_1) \propto \pi_j |P_{1|0}^j|^{-1/2}\exp\left\{-(y_1-\mu^j_{1|0})'(P_{1|0}^j)^{-1}(y_1-\mu^j_{1|0})/2\right\}\eqsp. 
+\]
+Then, $\mu_1^k$ and $P_1^k$ are computed using a Kalman filter:
 \begin{align*}
 K^k_{1} &=\Sigma_1B'_{a_1^k}\left(B_{a_1^k}\Sigma_1B'_{a_1^k} + \barG_{a_1^k}\right)^{-1}\eqsp,\\
 \mu^k_{1} &= \mu_{1} + K^k_1\left(Y_1 - c_{a_{1}^k} - B_{a_1^k}\mu_{1}\right)\eqsp,\\
 P^k_{1} &=\left(I-K^k_{1}B_{a_1^k}\right)\Sigma_1\eqsp.
 \end{align*}
-Particle $a_1^k$ is associated with the importance weight $\omega^k_1 \propto p(y_1|a_1^k)$. This weight is updated by noting that the conditional distribution of $Y_1$ given $a_1^k$ is a Gaussian distribution with mean $c_{a^k_1}+B_{a^k_1}\mu_1$ and variance $B_{a^k_1}\Sigma_1B'_{a^k_1} + \barG_{a^k_1}$. 
-\paragraph{Iterations}
+Each particle particle $a_1^k$ is associated with the importance weight $\omega^k_1 = 1/N$. 
+
+\vspace{.2cm}
+
+%This weight is updated by noting that the conditional distribution of $Y_1$ given $a_1^k$ is a Gaussian distribution with mean $c_{a^k_1}+B_{a^k_1}\mu_1$ and variance $B_{a^k_1}\Sigma_1B'_{a^k_1} + \barG_{a^k_1}$. 
+\noindent\textbf{Iterations}\\
 %For all $2\le i \le n$, particle indices $(I^k_i)_{1\le k \le N}$ are sampled independently in $\{1,\ldots,N\}$ with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$.  The ancestral path of indicator variables at time $i-1$ is defined by:
 %\begin{equation}
 %\label{eq:ancestral:traj}
@@ -131,7 +146,8 @@ Particle $a_1^k$ is associated with the importance weight $\omega^k_1 \propto p(
 %\mu_{1:i-1}^k = (\mu^{\mathsf{A}^k_1}_1,\ldots,\mu^{\mathsf{A}^k_{i-1}}_{i-1})\quad\mbox{and}\quad P_{1:i-1}^k = (P^{\mathsf{A}^k_1}_1,\ldots,P^{\mathsf{A}^k_{i-1}}_{i-1})\eqsp.
 %\]
 %The new indicator variables $(a_i^k)_{1\le k \le N}$ are sampled independently in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$, where for all $j \in \{1,\ldots, J\}$:
-For all sampled trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$ and all $1\le j \le J$, define:
+Several procedures may be used to extend the trajectories $(a^k_{1:i-1})_{1\le k \le N}$ at time $i$.
+For all sampled trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$ and all $1\le j \le J$,  \cite{chen:liu:2000} used the incremental weights:
 \[
 \gamma_i^{j,k} = p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) Q(a_{i-1}^k,j)\eqsp.
 \]
@@ -139,11 +155,7 @@ The conditional distribution of $Y_i$ given $a^k_{1:i-1}$, $a_i$ and $Y_{1:i-1}$
 \[
 \gamma_i^{j,k} \propto  Q(a_{i-1}^k,j)|B_jP^{j,k}_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^{j,k}_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^{j,k}_{i|i-1}}^2\right\} \eqsp,
 \]
-where 
-\begin{align*}
-\mu^{j,k}_{i|i-1} &= d_{j} + T_{j}\mu^k_{i-1}\eqsp,\\
-P^{j,k}_{i|i-1} &= T_{j}P^k_{i-1}T'_{j} + \barH_{j}\eqsp.
-\end{align*}
+where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{j}P^k_{i-1}T'_{j} + \barH_{j}$. In \cite{chen:liu:2000}, for all $1\le k \le N$, an ancestral path is chosen with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$. Then, the new indicator variable $a_i^k$ is sampled in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$. A drawback of this method is that only ancestral paths that have been selected using the importance weights $(\omega^k_{i-1})_{1\le k \le N}$ are extended at time $i$. Following \cite{barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths.
 
 
 %$\mu_i^k$ and $P_i^k$ are updated according to:
