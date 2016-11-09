@@ -185,7 +185,7 @@ where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{
 
 
 \subsection{Algorithm based on the structural approximation of \cite{kim:1994}, \cite{barber:2006}}
-The method to approximate the smoothing distributions of the indicator variables given all the observations proposed by \cite{barber:2006} relies on an tractable approximation of $p(a_i|a_{i+1:n},y_{1:n})$. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$, approximating the filtering distributions are available. Then, note that, for all $1\le i\le n$,
+The method to approximate the smoothing distributions of the indicator variables given all the observations proposed by \cite{barber:2006} relies on an tractable approximation of $p(a_i|a_{i+1:n},y_{1:n})$. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$ approximating the filtering distributions are available. Then, note that, for all $1\le i\le n$,
 \[
 p(a_{i:n}|y_{1:n}) = p(a_{i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp.
 \]
@@ -204,7 +204,7 @@ p^{\mathsf{Kim}}_N(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \
 \]
 
 \subsection{FFBS based algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}}
-\cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} proposed a Rao-Blackwellised procedure to sample the indicator variables backward in time following the same steps as in the Forward Filtering Backward Smoothing algorithm \cite{huerzeler:kunsch:1998,doucet:godsill:andrieu:2000} without using the approximation of \cite{kim:1994}. The algorithm relies on the decomposition given, for all $1\le i \le n-1$, by:
+\cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} proposed a Rao-Blackwellised procedure to sample the indicator variables backward in time following the same steps as in the Forward Filtering Backward Smoothing algorithm \cite{huerzeler:kunsch:1998,doucet:godsill:andrieu:2000} without using the ad-hoc approximation of \cite{kim:1994}. The algorithm relies on the decomposition given, for all $1\le i \le n-1$, by:
 \[
 p(a_{1:n}|y_{1:n}) = p(a_{1:i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp,
 \]
@@ -212,21 +212,21 @@ where
 \[
 p(a_{1:i}|a_{i+1:n},y_{1:n}) \propto p(y_{i+1:n},a_{i+1:n}|a_{1:i},y_{1:i})p(a_{1:i}|y_{1:i})\eqsp.
 \]
-The second factor in the last equation may be approximated using the ancestral  trajectories $(a^k_{1:i})_{1\le k \le N}$ defined in \eqref{eq:ancestral:traj} and importance weights $(\omega^k_{i})_{1\le k \le N}$ produced by the forward filter. Therefore, $p(a_{1:i}|a_{i+1:n},y_{1:n})$ may be approximated by:
+The second factor in the last equation may be approximated using the ancestral  trajectories $(a^k_{1:i})_{1\le k \le N}$ and the associated importance weights $(\omega^k_{i})_{1\le k \le N}$ produced by the forward filter. Therefore, $p(a_{1:i}|a_{i+1:n},y_{1:n})$ may be approximated by:
 \[
-p^N(a_{1:i}|a_{i+1:n},y_{1:n}) = \sum_{k=1}^N \tilde{\omega}^k_{i|n}\delta_{a^k_{1:i}}(a^k_{1:i})\eqsp,
+p^N(a_{1:i}|a_{i+1:n},y_{1:n}) = \sum_{k=1}^N \tilde{\omega}^k_{i|n}\delta_{a^k_{1:i}}(a_{1:i})\eqsp, \quad \text{with} \quad \tilde{\omega}^k_{i|n} \propto \omega_i^k p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i}) \eqsp. 
 \]
-with $\tilde{\omega}^k_{i|n} \propto \omega_i^k p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. Then, a trajectory $\tilde{a}_{1:n}$ approximatively distributed according to $p(a_{1:n}|y_{1:n})$ may be sampled following these steps:
+Then, a trajectory $\tilde{a}_{1:n}$ approximatively distributed according to $p(a_{1:n}|y_{1:n})$ may be sampled following these steps:
 \begin{enumerate}[-]
 \item Set $\tilde{a}_n= a_n^k$ with probabilities proportional to $(\omega_n^k)_{1\le k \le N}$.
 \item For all $1\le i\le n-1$, set $\tilde{a}_i = a_i^k$ with probabilities proportional to $(\tilde{\omega}_{i|n}^k)_{1\le k \le N}$.
 \end{enumerate}
-This algorithm requires to compute the quantity  $p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. As noted by \cite{lindsten:bunch:sarkka:schon:godsill:2015}, this predictive quantity is available analytically using backward Kalman filtering techniques. However, this has to be done for each trajectory $(a^k_{1:i})_{1\le k \le N}$, which leads to an algorithm with a prohibitive computational complexity. \cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a procedure computationally less intensive by noting that:
+This algorithm requires to compute the quantity  $p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i})$. As noted by \cite{lindsten:bunch:sarkka:schon:godsill:2015}, this predictive quantity is available analytically using  Kalman filtering techniques. However, this has to be done for each trajectory $(a^k_{1:i})_{1\le k \le N}$, which leads to an algorithm with a prohibitive computational complexity. \cite{lindsten:bunch:sarkka:schon:godsill:2015} proposed a procedure computationally less intensive by conditioning with respect to $z_i$ and then marginalizing with respect to this variable:
 \begin{equation}
 \label{eq:FFBS:incremental}
 p(y_{i+1:n},a_{i+1:n}|a^k_{1:i},y_{1:i}) = \int p(y_{i+1:n},a_{i+1:n}|z_i,a^k_{i})p(z_{i}|a^k_{1:i},y_{1:i})\rmd z_i\eqsp,
 \end{equation}
-which is similar to the two-filter decomposition of the smoothing distribution, see Section~\ref{sec:two-filer}. By  \cite{lindsten:bunch:sarkka:schon:godsill:2015},
+This is similar to the two-filter decomposition of the smoothing distribution, see Section~\ref{sec:two-filer}. By  \cite{lindsten:bunch:sarkka:schon:godsill:2015},
 \[
 p(y_{i+1:n},a_{i+1:n}|z_i,a_{i}) \propto Q(a_i,a_{i+1}) \exp\left\{-(z_i'\Omega_i(a_{i+1:n})z_i-2\lambda_i'(a_{i+1:n})z_i)/2\right\}\eqsp,
 \]
