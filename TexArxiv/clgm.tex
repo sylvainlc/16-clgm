@@ -82,7 +82,7 @@ The first fully Rao Blackwellised SMC smoother which should lead to consistent a
 More recently, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} introduced a Rao Blackwellised smoother based on the forward-backward decomposition of the FFBS algorithm with Rao Blackwellisation steps both in the forward and backward time directions.  
 %The backward pass samples trajectories of indicator variables backward in time using the particles and weights of the forward pass.
 
-In this paper, we propose to improve the performance of the algorithms introduced in \cite{briers:doucet:maskell:2010} and in \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} by using additional Rao-Blackwellisation steps allowing the sample "new" particles in the backward pass. This approach may be seen as an extension of the ideas of \cite{fa} for Rao-Blackwellized smoother.  In \cite{briers:doucet:maskell:2010}, for all $1\le i\le n$, the sampled forward and backward sequences are merged to approximate the posterior distribution of $(a_i,z_i)$. We propose to approximate the marginal smoothing distribution of $(a_i,z_i)$ by merging the sampled forward and backward trajectories at times $i-1$ and $i+1$ and integrating out all possible paths between time $i-1$ and time $i$ and between time $i$ and time $i+1$ instead of sampling random variables. Similarly, in the backward pass of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}, an indicator variable $\tilde{a}_i$ is sampled at time $1\le i\le n-1$ using the particles produced by the forward filter at time $i$. In this case, particle rejuvenation may be introduced by using the forward weighted samples at time $i-1$ and extending these trajectories at time $i$ with a Kalman filter for all possible values of the indicator variable. Then, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$ using an appropriately adapted weight.
+In this paper, we propose to improve the performance of the algorithms introduced in \cite{briers:doucet:maskell:2010} and in \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} by using additional Rao-Blackwellisation steps allowing the sample "new" particles in the backward pass. This approach may be seen as an extension of the ideas of \cite{fearnhead:clifford:2003} for Rao-Blackwellized smoother.  In \cite{briers:doucet:maskell:2010}, for all $1\le i\le n$, the sampled forward and backward sequences are merged to approximate the posterior distribution of $(a_i,z_i)$. We propose to approximate the marginal smoothing distribution of $(a_i,z_i)$ by merging the sampled forward and backward trajectories at times $i-1$ and $i+1$ and integrating out all possible paths between time $i-1$ and time $i$ and between time $i$ and time $i+1$ instead of sampling random variables. Similarly, in the backward pass of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}, an indicator variable $\tilde{a}_i$ is sampled at time $1\le i\le n-1$ using the particles produced by the forward filter at time $i$. In this case, particle rejuvenation may be introduced by using the forward weighted samples at time $i-1$ and extending these trajectories at time $i$ with a Kalman filter for all possible values of the indicator variable. Then, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$ using an appropriately adapted weight.
 
 The paper is organized as follows. The proposed modification of the fully Rao Blackwellised Monte Carlo smoothers are presented in Section~\ref{sec:RaoBlackwell}. The performance of all these methods is illustrated in Section~\ref{sec:numerical:experiments} with simulated data. In Section~\ref{}, an application of regime switchings for commodity markets is presented using CME crude oil (WTI) data. A detailed derivation of the algorithms is provided in the Appendix.
 
@@ -110,9 +110,10 @@ All the algorithms considered in this paper are based on forward-backward or two
 \subsection{Forward filter}
 \label{sec:forward}
 The SMC approximation $p^N_{}(a_{1:i},z_{i}|y_{1:i})$ of $p_{}(a_{1:i},z_{i}|y_{1:i})$ may be obtained using a standard Rao Blackwellised  algorithm. The procedure produces a sequence of trajectories $(a^k_{1:i})_{1\le k \le N}$ associated with importance weights $(\omega^k_{i})_{1\le k \le N}$ used to define the following approximation of $p_{}(a_{1:i},z_{i}|y_{1:i})$:
-\[
+\begin{equation}
+\label{eq:forward:SMC}
 p^N_{}(a_{1:i},z_{i}|y_{1:i}) = \sum_{k=1}^N\delta_{a^k_{1:i}}(a_{1:i})\,\omega^k_{i}\,p_{}(z_{i}|a^k_{1:i},y_{1:i})\eqsp.
-\]
+\end{equation}
 In this equation, the conditional distribution of the hidden state $z_{i}$ given the observations $y_{1:i}$ and a trajectory $a^k_{1:i}$ is a Gaussian distribution whose mean $\mu^k_{i}$ and variance $P^k_{i}$ may be obtained by using the Kalman filter's update.
 
 \vspace{.2cm}
@@ -161,8 +162,41 @@ The conditional distribution of $Y_i$ given $a^k_{1:i-1}$, $a_i$ and $Y_{1:i-1}$
 \[
 \gamma_i^{j,k} \propto  Q(a_{i-1}^k,j)|B_jP^{j,k}_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^{j,k}_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^{j,k}_{i|i-1}}^2\right\} \eqsp,
 \]
-where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{j}P^k_{i-1}T'_{j} + \barH_{j}$. In \cite{chen:liu:2000}, for all $1\le k \le N$, an ancestral path is chosen with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$. Then, the new indicator variable $a_i^k$ is sampled in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$. A drawback of this method is that only ancestral paths that have been selected using the importance weights $(\omega^k_{i-1})_{1\le k \le N}$ are extended at time $i$. Following \cite{barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths.
-
+where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{j}P^k_{i-1}T'_{j} + \barH_{j}$. In \cite{chen:liu:2000}, for all $1\le k \le N$, an ancestral path is chosen with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$. Then, the new indicator variable $a_i^k$ is sampled in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$. A drawback of this method is that only ancestral paths that have been selected using the importance weights $(\omega^k_{i-1})_{1\le k \le N}$ are extended at time $i$. Following \cite{barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths. Following \cite{fearnhead:clifford:2003,barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths. To obtain the weight associated with each offspring write the following approximation of  $p(a_{1:i}|y_{1:i})$ based on the weighted samples at time $i-1$:
+\begin{align*}
+p^N(a_{1:i}|y_{1:i})&\propto \sum_{k=1}^N\omega^k_{i-1}Q(a^k_{i-1},a_i)p(y_i|a^k_{1:i-1},a_i,y_{1:i-1})\delta_{a^k_{1:i-1}}(a_{1:i-1})\eqsp,\\
+&\propto \sum_{k=1}^N\sum_{j=1}^J\omega^k_{i-1}\gamma_i^{j,k}\delta_{(a^k_{1:i-1},j)}(a_{1:i})\eqsp.
+\end{align*}
+Therefore, each ancestral trajectory of the form  $(a^k_{1:i-1},j)$, $1\le k \le N$, $1\le j\le J$, is associated with the normalized weight $\tilde{\omega}^{j,k}_{i} \propto \omega^k_{i-1}\gamma_i^{j,k}$. Several random selection schemes have been proposed to discard some of the possible offsprings to maintain an average number of $N$ particles at each time step. Following \cite{barembruch:garivier:moulines:2008}, we might choose between the Kullback-Leibler Optimal Selection (KL-OS) or the Chi-Squared Optimal Selection (CS-OS) to associate a new weight to each of the $NJ$ trajectories. If the new weight is 0, then the corresponding particle can be removed.\\
+\textbf{KL-OS:} $\lambda$ is chosen as the solution of :
+\[
+\sum_{k=1}^N\sum_{j=1}^J\mathrm{min}\left(\tilde{\omega}^{j,k}_{i}/\lambda,1\right) = N\eqsp.
+\]
+For all $1\le j \le J$ and $1\le k \le N$, if $\tilde{\omega}^{j,k}_{i}\ge \lambda$ then the new weight $\tilde{\Omega}^{j,k}_{i}$ is $\tilde{\Omega}^{j,k}_{i}=\tilde{\omega}^{j,k}_{i}$ and if $\tilde{\omega}^{j,k}_{i}< \lambda$:
+\[
+\tilde{\Omega}^{j,k}_{i}=
+\left\{
+ \begin{array}{rl}
+  &\lambda \;\mbox{with probability } \tilde{\omega}^{j,k}_{i}/\lambda\eqsp,\\
+&0 \;\mbox{with probability } 1-\tilde{\omega}^{j,k}_{i}/\lambda\eqsp.
+\end{array}
+\right.
+\]
+\textbf{CS-OS:} $\lambda$ is chosen as the solution of :
+\[
+\sum_{k=1}^N\sum_{j=1}^J\mathrm{min}\left(\sqrt{\tilde{\omega}^{j,k}_{i}/\lambda},1\right) = N\eqsp.
+\]
+For all $1\le j \le J$ and $1\le k \le N$, if $\tilde{\omega}^{j,k}_{i}\ge \lambda$ then the new weight $\tilde{\Omega}^{j,k}_{i}$ is $\tilde{\Omega}^{j,k}_{i}=\tilde{\omega}^{j,k}_{i}$ and if $\tilde{\omega}^{j,k}_{i}< \lambda$:
+\[
+\tilde{\Omega}^{j,k}_{i}=
+\left\{
+ \begin{array}{rl}
+  &\sqrt{\tilde{\omega}^{j,k}_{i}\lambda} \;\mbox{with probability } \sqrt{\tilde{\omega}^{j,k}_{i}/\lambda}\eqsp,\\
+&0 \;\mbox{with probability } 1-\sqrt{\tilde{\omega}^{j,k}_{i}/\lambda}\eqsp.
+\end{array}
+\right.
+\]
+Then, in both cases, all particles such that $\tilde{\Omega}^{j,k}_{i} = 0$ are discarded and for all the other trajectories defined as an ancestral path $(a^k_{1:i-1})$ extended by $a^k_i = j$, the new corresponding weight $\omega$ in \eqref{eq:forward:SMC} is given by the normalized weight $\tilde{\Omega}^{j,k}_{i}$.
 
 %$\mu_i^k$ and $P_i^k$ are updated according to:
 %\begin{align*}
