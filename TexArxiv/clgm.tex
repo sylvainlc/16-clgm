@@ -299,7 +299,7 @@ where $P_i^k = \Gamma_i^k(\Gamma_i^k)'$. Therefore,
 \]
 If $(\tilde{a}^k_{1:n})_{1\le k \le \tilde{N}}$ are independent copies of $\tilde{a}_{1:n}$, the SMC approximation of \cite{lindsten:bunch:sarkka:schon:godsill:2015} of the joint smoothing distribution of the indicator variables is:
 \[
-p^{\mathsf{Lbscg}}_N(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \delta_{\tilde{a}^{k}_{1:n}}(a_{1:n})\eqsp.
+p^{\mathsf{Lbscg}}_{\tilde{N}}(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \delta_{\tilde{a}^{k}_{1:n}}(a_{1:n})\eqsp.
 \]
 \textbf{Additional particle rejuvenation step}\\
 An improved version of this FFBS algorithm may be defined for all $2\le i\le n-1$ by writing :
@@ -317,7 +317,7 @@ where
 \omega_{i|i-1}^k(a_i) = \omega_{i-1}^k Q(a_{i-1}^k,a_i)|\Sigma^k_{i|i-1}(a_i)|^{-1/2}\mathrm{e}^{-\left(y_i - y^k_{i|i-1}(a_i)\right)'\left(\Sigma^k_{i|i-1}(a_i)\right)^{-1}\left(y_i - y^k_{i|i-1}(a_i)\right)/2}\eqsp,
 \]
 \[
-y^k_{i|i-1}(a_i) = c_{a_i} + B_{a_i}\mu^k_{i-1}\;\mbox{and}\; \Sigma^k_{i|i-1}(a_i) = B_{a_i}P^k_{i-1}B'_{a_i} + \barG_{a_i}\eqsp.
+y^k_{i|i-1}(a_i) = c_{a_i} + B_{a_i}(d_{a_i}+T_{a_i}\mu^k_{i-1})\;\mbox{and}\; \Sigma^k_{i|i-1}(a_i) = B_{a_i}(T_{a_i}P^k_{i-1}T'_{a_i}+\barH_{a_i})B'_{a_i} + \barG_{a_i}\eqsp.
 \]
 %\[
 %p^N_{}(a_{1:i-1},z_{i-1}|y_{1:i-1}) = \sum_{k=1}^N\delta_{a^k_{1:i-1}}(a_{1:i-1})\,\omega^k_{i-1}\,p_{}(z_{i-1}|a^k_{1:i-1},y_{1:i-1})\delta_{a^k_{1:i-1}}(a_{1:i-1})\eqsp.
@@ -347,7 +347,7 @@ p(a_{i},z_{i}|y_{1:n})  \propto  p_{}(a_{i},z_{i}|y_{1:i-1})p(y_{i:n}|a_i,z_i)\e
 \end{equation}
 The first term in the right hand side may be approximated using the forward filter, however, as the function $(a_{i},z_{i})\mapsto p_{}(y_{i:n}|a_{i},z_{i})$ is not a probability density function, it is not possible to use SMC samples to approximate it. The backward filter uses artificial densities to introduce a surrogate target density function which may be approximated recursively using SMC methods. Then, the forward and backward weighted samples are combined using \eqref{eq:dens:bwd_fwd_doucet} to approximate $p(a_{i},z_{i}|y_{1:n})$. %Following \cite{briers:doucet:maskell:2010}, for any probability densities $(\gamma^{}_{i})_{1\le i \le n}$, define the following joint probability densities:
 %Conditional on $(a_i)_{1\le i\le n}$, these equations define a linear Gaussian model for which analytic computations may be performed to marginalize the states $(Z_{i})_{1\le i \le n}$ in order to reduce the the variance of SMC methods.
-\paragraph{Additional Rao-Blackwellisation step:}
+\textbf{Additional particle rejuvenation step}\\
 for $2\le i \le n-1$, our proposed algorithm relies on the explicit marginalization:
 \begin{equation}
 \label{eq:dens:bwd_fwd}
@@ -534,12 +534,19 @@ The proof is postponed to Appendix~\ref{sec:app:proofs}.
 
 \section{Numerical experiments}
 \label{sec:numerical:experiments}
-This section highlights the performance of the Rao Blackwellised Two-Filter approximation (RBTF) of the marginal smoothing distributions in comparison to the other Rao Blackwellised smoothers introduced in Section~\ref{sec:RaoBlackwell}.
-
 \subsection{Simulated data}
-We consider the two-factor model \eqref{eq:model:state} and \eqref{eq:model:obs} with $J=2$. The performance of the algorithms are analyzed in two different settings with $n=1500$ observations. In both settings the transition matrix $Q$ is such that the states are prone to stay in the same regime  for many time steps as expected for the WTI crude oil data,  see Section~\ref{sec:exp}. The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). The initial state variance is high to emphasize the fact that there is no prior precise knowledge on the state value.
-
-
+This section highlights the performance of the additional Rao Blackwellisation steps for the Two-Filter and the FFBS approximations of the marginal smoothing distributions in the case where $J=2$. In each setting the transition matrix $Q$ is such that the states are prone to stay in the same regime  for many time steps as expected for the WTI crude oil data,  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
+\[
+\pi(1)=\pi(2) = 1/2\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= c_2 = 0 \eqsp,
+\]
+\[
+Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T_1 = T_2 = 1\;\;\barH_1 = \barH_2= 0.05\eqsp,
+\]
+\[
+B_1 = B_2 =1\;\;\barG_1 = 0.3\;\;\barG_2 = 0.1\eqsp.
+\]
+The two FFBS algorithms are used with $N = \tilde{N} = 100$.
+Figure~\ref{fig:ffbs} displays the RMSE values as a function of time with $100$ independent batches of data and shows that the additional rejuvenation step improves the performance of the algorithm. Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
 \paragraph{Experiment 1:}
 \[
 \pi(1)=\pi(2) = 1/2\\;\;d_1 = \begin{pmatrix}0 \\ 0.5 \end{pmatrix}\;\; d_2 = \begin{pmatrix}0 \\ 0\end{pmatrix}\\;\;c_1= \begin{pmatrix}0 & 0& 0 & 0 \end{pmatrix}'\;\;c_2 =\begin{pmatrix}0 & 0 & 0 & 0 \end{pmatrix}'\eqsp,
@@ -578,8 +585,7 @@ The smoothing distributions are estimated with $N=15$ particles. Both methods ar
 %\caption{estimated probabilities by RBTF in experiment 1 [top] and experiment 2 [bottom] with the two artificial laws: yellow (the first one) and red (the third one).}
 %\label{fig:exp:artificial}
 %\end{figure}
-
-Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the labels given by the algorithms using:
+The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the labels given by the algorithms using:
 \[
 \gamma^{}_i (a_i, z_i) = \sum_{k=1}^{N} Q(a^{k}_{i-1},a_i) \omega^{k}_{i-1} \exp\left\{ -\frac{1}{2} \log \left|\barH_{a^k_{i-1}} \right| -\frac{1}{2}\normMat{\barH_{a^k_{i-1}}}{z_i - d_{a^k_{i-1}} -T \mu^k_{i-1} }^2\right\} \eqsp.
 \]
