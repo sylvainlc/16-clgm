@@ -535,7 +535,7 @@ The proof is postponed to Appendix~\ref{sec:app:proofs}.
 \section{Numerical experiments}
 \label{sec:numerical:experiments}
 \subsection{Simulated data}
-This section highlights the performance of the additional Rao Blackwellisation steps for the Two-Filter and the FFBS approximations of the marginal smoothing distributions in the case where $J=2$. In each setting the transition matrix $Q$ is such that the states are prone to stay in the same regime  for many time steps as expected for the WTI crude oil data,  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
+This section highlights the performance of the additional Rao Blackwellisation steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where $J=2$. In each setting the transition matrix $Q$ is such that the states are prone to stay in the same regime  for many time steps as expected for the WTI crude oil data,  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
 \[
 \pi(1)=\pi(2) = 1/2\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= c_2 = 0 \eqsp,
 \]
@@ -545,8 +545,16 @@ Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T_1 = T_2 = 1\;\;\b
 \[
 B_1 = B_2 =1\;\;\barG_1 = 0.3\;\;\barG_2 = 0.1\eqsp.
 \]
-The two FFBS algorithms are used with $N = \tilde{N} = 100$.
-Figure~\ref{fig:ffbs} displays the RMSE values as a function of time with $100$ independent batches of data and shows that the additional rejuvenation step improves the performance of the algorithm. Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
+The two FFBS algorithms are used with $N = \tilde{N} = 50$ and the estimated posterior probabilities $\mathbb{P}(a_k=1|Y_{1:n})$ are compared to the estimation obtained with the proposed FFBS algorithm with $2000$ particles. Figure~\ref{fig:ffbs:posterior} illustrates that the algorithm with rejuvenation slightly improves the original algorithm in this simple case. 
+\begin{figure}
+\centering
+\includegraphics[scale=.3]{FFBSplot.eps}
+\caption{Estimated posterior probabilities by the two FFBS algorithms.}
+\label{fig:ffbs:posterior}
+\end{figure}
+In addition, Table~\ref{fig:ffbs:RMSE} displays the RMSE for the estimation of the labels as a function of time with $100$ independent batches of data and shows that the additional rejuvenation step improves the performance of the algorithm (at time $i$, the estimated label is set to $1$ if the estimation of $\mathbb{P}(a_i|Y_{1:n})$ is greater than $0.5$ and to $2$ otherwise). 
+
+Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
 \paragraph{Experiment 1:}
 \[
 \pi(1)=\pi(2) = 1/2\\;\;d_1 = \begin{pmatrix}0 \\ 0.5 \end{pmatrix}\;\; d_2 = \begin{pmatrix}0 \\ 0\end{pmatrix}\\;\;c_1= \begin{pmatrix}0 & 0& 0 & 0 \end{pmatrix}'\;\;c_2 =\begin{pmatrix}0 & 0 & 0 & 0 \end{pmatrix}'\eqsp,
