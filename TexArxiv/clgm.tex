@@ -650,7 +650,7 @@ This model allows to exhibit fundamental features of commodity future prices, wh
 \[
 Z_i = d_{a_{i-1}} + T Z_{i-1} + H_{a_{i-1}} \varepsilon_i\eqsp,
 \]
-%where (setting $\Delta t_i = t_i-t_{i-1}=1$):
+%where (setting $\tau t_i = t_i-t_{i-1}=1$):
 %\[
 %d_{j} \eqdef
 %\begin{pmatrix} \left[r- \alpha_{j} - \sigma^2_{j}/2 \right]  + \alpha_{j}[1-\rme^{-\kappa}]/\kappa\\
@@ -663,18 +663,17 @@ Z_i = d_{a_{i-1}} + T Z_{i-1} + H_{a_{i-1}} \varepsilon_i\eqsp,
 %\barH_{j}(1,2) & = \left(\rho_{j} \eta_{j} \sigma_{j}-\eta^2_{j}/\kappa\right)\left(1-\rme^{-\kappa} \right)/\kappa + \eta^2_{j}\left(1-\rme^{-2\kappa} \right)/(2\kappa^2)\eqsp,\\
 %\barH_{j}(2,1) &= \barH_{j}(1,2)\eqsp,\quad \barH_{j}(2,2) = \eta^2_{j}\left( 1-\rme^{-2\kappa} \right)/(2\kappa)\eqsp.
 %\end{align*}
-where (with $\barH_{a_{i-1}} \eqdef H_{a_{i-1}}H'_{a_{i-1}}$ and $\Delta = t_i-t_{i-1}$):
+where (with $\barH_{a_{i-1}} \eqdef H_{a_{i-1}}H'_{a_{i-1}}$ and $\tau = t_i-t_{i-1}$):
 \begin{align*}
 d_{a_{i-1}} &\eqdef
-\begin{pmatrix} \left[\mu- \alpha_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \Delta + \alpha_{a_{i-1}}[1-\rme^{-\kappa \Delta}]/\kappa\\
-\alpha_{a_{i-1}} [1-\rme^{-\kappa \Delta}] \end{pmatrix}\eqsp,\\
+\begin{pmatrix} \left[\mu- \alpha_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \tau + \alpha_{a_{i-1}}[1-\rme^{-\kappa \tau}]/\kappa\\
+\alpha_{a_{i-1}} [1-\rme^{-\kappa \tau}] \end{pmatrix}\eqsp,\\
 T &\eqdef
-\begin{pmatrix} 1 & -[1-\rme^{-\kappa \Delta}]/\kappa \\ 0 & \rme^{-\kappa \Delta}  \end{pmatrix} \eqsp,\\
-\barH_{a_{i-1}}(1,1) &= \sigma^2_{a_{i-1}} \Delta + \eta^2_{a_{i-1}}\left\{\Delta  + (1-\rme^{-2\kappa \Delta})/(2\kappa) - 2(1-\rme^{-\kappa \Delta})/\kappa\right\}/\kappa^2 \\
-&\hspace{4.4cm} - 2\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}\left\{ \Delta t_i - (1-\rme^{-\kappa \Delta})/\kappa \right\}/\kappa\eqsp, \\
-\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa \right)\left(1-\rme^{-\kappa \Delta} \right)/\kappa + \eta^2_{a_{i-1}}\left(1-\rme^{-2\kappa \Delta} \right)/(2\kappa^2)\eqsp,\\
-\barH_{a_{i-1}}(2,1) &= \barH_{a_{i-1}}(1,2)\eqsp,\\
-\barH_{a_{i-1}}(2,2) &= \eta^2_{a_{i-1}}\left( 1-\rme^{-2\kappa \Delta} \right)/(2\kappa)\eqsp.
+\begin{pmatrix} 1 & -[1-\rme^{-\kappa \tau}]/\kappa \\ 0 & \rme^{-\kappa \tau}  \end{pmatrix} \eqsp,\\
+\barH_{a_{i-1}}(1,1) &= \sigma^2_{a_{i-1}} \tau + \eta^2_{a_{i-1}}\left\{\tau  + (1-\rme^{-2\kappa \tau})/(2\kappa) - 2(1-\rme^{-\kappa \tau})/\kappa\right\}/\kappa^2 \\
+&\hspace{4.4cm} - 2\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}\left\{ \tau t_i - (1-\rme^{-\kappa \tau})/\kappa \right\}/\kappa\eqsp, \\
+\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa \right)\left(1-\rme^{-\kappa \tau} \right)/\kappa + \eta^2_{a_{i-1}}\left(1-\rme^{-2\kappa \tau} \right)/(2\kappa^2)\eqsp,\\
+\barH_{a_{i-1}}(2,1) &= \barH_{a_{i-1}}(1,2)\eqsp, \quad \barH_{a_{i-1}}(2,2) = \eta^2_{a_{i-1}}\left( 1-\rme^{-2\kappa \tau} \right)/(2\kappa)\eqsp.
 \end{align*}
 %Remarks que the equations \eqref{eq:modele} under the pricing measure $\mathbb{Q}$ becomes:
 %\begin{equation}
@@ -695,32 +694,17 @@ T &\eqdef
 %$ with
 %\[
 %\widetilde{d}_{a_{i-1}} \eqdef
-%\begin{pmatrix} \left[r - \widetilde{\alpha}_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \Delta t_i + \widetilde{\alpha}_{a_{i-1}}[1-e^{-\kappa \Delta t_i}]/\kappa\\
-%\widetilde{\alpha}_{a_{i-1}} [1-e^{-\kappa \Delta t_i}] \end{pmatrix}\eqsp,
+%\begin{pmatrix} \left[r - \widetilde{\alpha}_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \tau t_i + \widetilde{\alpha}_{a_{i-1}}[1-e^{-\kappa \tau t_i}]/\kappa\\
+%\widetilde{\alpha}_{a_{i-1}} [1-e^{-\kappa \tau t_i}] \end{pmatrix}\eqsp,
 %\]
 %The transition matrix $Q$ is assumed to be the same under the pricing measure.
-The observations are Wednesday future contracts of the West Texas Intermediate crude oil (WTI) traded in the Chicago Mercantile Exchange (CME) from $11$ January 1995 to $13$ November 2013. The contracts are numbered $F_1, F_2, \ldots, F_{36}$ where $F_1$ (or front month) is the earliest delivery future contract, $F_2$ is the second earliest delivery future contract and so on. Among these $36$ contracts, the four future contracts: $F_1, F_4, F_6, F_{13}$ are used since their trading volumes and their impacts on the Term Structures are the most important ($F_1$ is the most liquid contract, $F_{13}$ characterizes the gap between prices over a one year period, $F_4$ and $F_6$ are intermediate future contracts that are mostly traded). As in \cite{almansour:2016}, we consider that each  future contract has a fixed time to maturity: $F_1, F_4, F_6, F_{13}$ have time to  maturity $4$, $16$, $26$, $56$ weeks.  Our time series contains $n =975$ weekly data with $534$ in backwardation and $441$ in contango (the backwardation effect is more frequent with crude oil data). At each time $t_i = i\Delta t$, with $\Delta t = 0.0192$, the observations of the $\dimy = 4$ future prices are $Y_i \eqdef (\ln(F^{(market)}_{i\Delta t,m_1}), \ldots, \ln(F^{(market)}_{i\Delta t,m_{\dimy}}))'$, where $F_{t_i,m}$ is the future price at $t_i$ for a maturity  $m$ weeks.
+The observations are Wednesday future contracts of the West Texas Intermediate crude oil (WTI) traded in the Chicago Mercantile Exchange (CME) from $11$ January 1995 to $13$ November 2013. The contracts are numbered $F_1, F_2, \ldots, F_{36}$ where $F_1$ (or front month) is the earliest delivery future contract, $F_2$ is the second earliest delivery future contract and so on. Among these $36$ contracts, the four future contracts: $F_1, F_4, F_6, F_{13}$ are used since their trading volumes and their impacts on the Term Structures are the most important ($F_1$ is the most liquid contract, $F_{13}$ characterizes the gap between prices over a one year period, $F_4$ and $F_6$ are intermediate future contracts that are mostly traded). As in \cite{almansour:2016}, we consider that each  future contract has a fixed time to maturity: $F_1, F_4, F_6, F_{13}$ have time to  maturity $4$, $16$, $26$, $56$ weeks.  Our time series contains $n =975$ weekly data with $534$ in backwardation and $441$ in contango (the backwardation effect is more frequent with crude oil data). At each time $t_i = i\tau$, with $\tau = 0.0192$, the observations of the $\dimy = 4$ future prices are $Y_i \eqdef (\ln(F^{(market)}_{i\tau t,m_1}), \ldots, \ln(F^{(market)}_{i\tau t,m_{\dimy}}))'$, where $F_{t_i,m}$ is the future price at $t_i$ for a maturity  $m$ weeks.
 %In addition, the backwardation is more likely to stay in backwardation than switch to contango and the same holds for the contango regime.
 A closed form solution for $F_{t_i,m}$  may be written:
 \[
 F_{t_i,m} \eqdef \exp\left( \mathsf{A}_{m}(a_{i}) + \mathsf{B}_{m} Z_{i}\right)\eqsp,
 \]
-where $\mathsf{B}_0	= \begin{pmatrix}1 & 0 \end{pmatrix}$ and  $\mathsf{B}_m    = \mathsf{B}_{m-1} T$ so that  $ \mathsf{B}_m= \begin{pmatrix} 1 & -\left(1-\rme^{-\kappa m \Delta t}\right)/\kappa \end{pmatrix}$ and
-%$B_\tau$ is the $1 \times 2$ matrix given by $B_{\tau} \eqdef  \begin{pmatrix} 1 &  -(1-e^{-\kappa \tau})/\kappa \end{pmatrix}$ and
-%for all $1\le j\le J$, $A_0(j) \eqdef 0$. Define $F_{i,m} \eqdef F_{i\Delta t, m \Delta t }$ and $\mathcal{F}_i$ the $\sigma$-field generated by $(a_k)_{0\le k \le i}$ and $(Z_k)_{0\le k \le i}$. By definition of future prices and the assumption that there is no regime switching between $t_i$ and $t_{i+1}$, we have:
-%%\begin{align*}
-%%A_{t,\tau} &\eqdef r \tau - \int^{\tau}_0 \alpha_{a_{t+s}} \left(1- e^{-\kappa(\tau-s)} \right)\rmd s + (1/\kappa^2)\int^{\tau}_0 \eta^2_{a_{t+s}} \left(1-e^{-\kappa (\tau-s)}\right)^2 \rmd s \\
-%%&\hspace{7cm}  - (2/\kappa)\int^{\tau}_0 \rho_{a_{t+s}} \eta_{a_{t+s}}\sigma_{a_{t+s}} \left( 1 -e^{-\kappa \left(\tau-s\right)} \right)\rmd s \eqsp,\\
-%%B_{\tau} &\eqdef  \begin{pmatrix} 1 &  -(1-e^{-\kappa \tau})/\kappa \end{pmatrix}\eqsp.
-%%\end{align*}
-%\begin{align*}
-%F_{i,m} &= \exp (A_m(a_i) + B_m Z_i)\eqsp,\\
-%&=\mathbb{E}\left[\exp (A_{m-1}(a_{i+1}) + B_{m-1} Z_{i+1})\middle|\mathcal{F}_i\right]\eqsp,\\
-%&= \mathbb{E}\left[\sum^J_{k=1} 1_{a_{i+1}=k}\exp (A_{m-1}(k) + B_{m-1} Z_{i+1})\middle|\mathcal{F}_i\right] \eqsp,\\
-%&= \mathbb{E}\left[\sum^J_{k=1} 1_{a_{i+1}=k}\exp \left(A_{m-1}(k) + B_{m-1} ( d_{a_i} + T Z_i + H_{a_i} \epsilon_{i+1} ) \right)\middle|\mathcal{F}_i\right] \eqsp,\\
-%&= \sum^J_{k=1} q(a_i,k) \exp \left(A_{m-1}(k) + B_{m-1} d_{a_i} + B_{m-1} \barH_{a_i} B'_{m-1}/2 + B_{m-1} T Z_i \right)\eqsp.
-%\end{align*}
-%From the above equality, we obtain,
+where $\mathsf{B}_0	= \begin{pmatrix}1 & 0 \end{pmatrix}$ and  $\mathsf{B}_m    = \mathsf{B}_{m-1} T$ so that  $ \mathsf{B}_m= \begin{pmatrix} 1 & -\left(1-\rme^{-\kappa m \tau t}\right)/\kappa \end{pmatrix}$ and
 for all $1\le j\le J$, $\mathsf{A}_0(j) = 0$,  and
 \begin{equation*}
 \mathsf{A}_m(j) = \ln \left(\sum^J_{k=1} Q(j,k) \exp(\mathsf{A}_{m-1}(k)) \right) + \mathsf{B}_{m-1} d_j + \frac{1}{2} \mathsf{B}_{m-1} \barH_j B'_{m-1}\eqsp.
@@ -832,10 +816,10 @@ The initial transition probability in CMA-ES is chosen as $Q(1,1) = 0.98, \; Q(2
 	\end{tabular}
 	\caption{Initial values for the EM algorithm.}
 \end{figure}\\
-The number of particles is set to $N = 100$, $\Delta t = 1/52$. % and the backward filter is based on the  third artificial distribution introduced in Section~\ref{sec:artificial:distribution}.
+The number of particles is set to $N = 100$, $\tau  = 1/52$. % and the backward filter is based on the  third artificial distribution introduced in Section~\ref{sec:artificial:distribution}.
 The interest rate is $r = 0.0296$ as in \cite{almansour:2016}. The initial guess for the mean and variance of the initial state are
 \[
-\mu_1 = \begin{pmatrix} \ln F^{(market)}_{1,4} & r-\cfrac{\ln F^{(market)}_{1,16}-\ln F^{(market)}_{1,4}}{(16-4)\Delta t} \end{pmatrix}\quad \mbox{and}\quad \Sigma_1 = \begin{pmatrix} 0.05 & 0 \\ 0 & 0.05 \end{pmatrix}\eqsp.
+\mu_1 = \begin{pmatrix} \ln F^{(market)}_{1,4} & r-\cfrac{\ln F^{(market)}_{1,16}-\ln F^{(market)}_{1,4}}{(16-4)\tau} \end{pmatrix}\quad \mbox{and}\quad \Sigma_1 = \begin{pmatrix} 0.05 & 0 \\ 0 & 0.05 \end{pmatrix}\eqsp.
 \]
 The CMA-ES algorithm is used with an initial standard deviation for the parameters $\sigma_{cmaes} = 0.005$, a number of selected search points $\mu_{cmaes} = 20$ and a population size $\lambda_{cmaes} = 100$. The algorithm is stopped after $10000$ iterations.
 %and its bounded conditions are \\
