@@ -247,7 +247,7 @@ p^{\mathsf{Kim}}_N(a_{1:n}|Y_{1:n}) = \frac{1}{\tilde{N}}\sum_{k=1}^{\tilde N} \
 \[
 p(a_{1:n}|y_{1:n}) = p(a_{1:i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp,
 \]
-where
+This decomposition is similar to the Rauch-Tung-Striebel decomposition of the filtering distribution. The first factor on the right hand side of the previous equation is nevertheless more difficult to handle because it itself relies on all the observations. Nevertheless, as noted by \cite{sarkka:bunch:godsill:2012}, this term can be computed recursively by considering the following obvious decomposition:
 \[
 p(a_{1:i}|a_{i+1:n},y_{1:n}) \propto p(y_{i+1:n},a_{i+1:n}|a_{1:i},y_{1:i})p(a_{1:i}|y_{1:i})\eqsp.
 \]
