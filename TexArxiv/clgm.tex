@@ -84,7 +84,7 @@ More recently, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsi
 
 In this paper, we propose to improve the performance of the algorithms introduced in \cite{briers:doucet:maskell:2010} and in \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} by using additional Rao-Blackwellisation steps allowing the sample "new" particles in the backward pass. This approach may be seen as an extension of the ideas of \cite{fearnhead:clifford:2003} for Rao-Blackwellized smoother.  In \cite{briers:doucet:maskell:2010}, for all $1\le i\le n$, the sampled forward and backward sequences are merged to approximate the posterior distribution of $(a_i,z_i)$. We propose to approximate the marginal smoothing distribution of $(a_i,z_i)$ by merging the sampled forward and backward trajectories at times $i-1$ and $i+1$ and integrating out all possible paths between time $i-1$ and time $i$ and between time $i$ and time $i+1$ instead of sampling random variables. Similarly, in the backward pass of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}, an indicator variable $\tilde{a}_i$ is sampled at time $1\le i\le n-1$ using the particles produced by the forward filter at time $i$. In this case, particle rejuvenation may be introduced by using the forward weighted samples at time $i-1$ and extending these trajectories at time $i$ with a Kalman filter for all possible values of the indicator variable. Then, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$ using an appropriately adapted weight.
 
-The paper is organized as follows. The proposed modification of the fully Rao Blackwellised Monte Carlo smoothers are presented in Section~\ref{sec:RaoBlackwell}. The performance of all these methods is illustrated in Section~\ref{sec:numerical:experiments} with simulated data. In Section~\ref{}, an application of regime switchings for commodity markets is presented using CME crude oil (WTI) data. A detailed derivation of the algorithms is provided in the Appendix.
+The paper is organized as follows. The proposed modification of the fully Rao Blackwellised Monte Carlo smoothers are presented in Section~\ref{sec:RaoBlackwell}. The performance of all these methods is illustrated in Section~\ref{sec:numerical:experiments} with simulated data. In Section~\ref{sec:crudeoil}, an application of regime switchings for commodity markets is presented using CME crude oil (WTI) data. A detailed derivation of the algorithms is provided in the Appendix.
 
 
 \section{Rao Blackwellised smoothing algorithms}
@@ -532,10 +532,9 @@ The proof is postponed to Appendix~\ref{sec:app:proofs}.
 \end{proof}
 
 
-\section{Numerical experiments}
+\section{Simulated data}
 \label{sec:numerical:experiments}
-\subsection{Simulated data}
-This section highlights the performance of the additional Rao Blackwellisation steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where $J=2$. In each setting the transition matrix $Q$ is such that the states are prone to stay in the same regime  for many time steps as expected for the WTI crude oil data,  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
+This section highlights the performance improvement brought by  the additional Rao-Blackwellisation steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where the number of states is $J=2$. In each setting the transition matrix $Q$ is such that the probability of switching from one regime to the other is small, as expected for the WTI crude oil data;  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
 \[
 \pi(1)=\pi(2) = 1/2\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= c_2 = 0 \eqsp,
 \]
@@ -555,7 +554,7 @@ The two FFBS algorithms are used with $N = \tilde{N} = 50$ and the estimated pos
 Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the difference between the the estimation obtained with the proposed FFBS algorithm with rejuvenation and $2000$ particles and the estimation given by the two FFBS algorithms with $N = \tilde{N} = 50$.
 \begin{figure}
 \centering
-\includegraphics[scale=.3]{err_est_ffbs.eps}
+\includegraphics[scale=.3]{err_est_ffbs}
 \caption{Posterior probabilities estimation error fo the two FFBS algorithms.}
 \label{fig:ffbs:err}
 \end{figure}
@@ -620,14 +619,15 @@ In both cases, RBTF behaves slightly better than \cite{briers:doucet:maskell:201
 \includegraphics[scale=.5]{N15_1_500}
 \includegraphics[scale=.5]{N15_501_1000}
 \includegraphics[scale=.5]{N15_1001_1500}
-\caption{Experiment 2 - estimated probabilites by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true labels (squared black).}
+\caption{Experiment 2 - estimated smoothing probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true labels (squared black).}
 \label{fig:exp2:label}
 \end{figure}
 
-\subsection{Application to CME crude oil (WTI)}
+\section{Application to CME crude oil (WTI)}
+\label{sec:crudeoil}
 \label{sec:exp}
 
-\subsubsection*{State dynamics}
+\subsection{Model}
 Modeling commodity prices is a crucial step to valuate contingent claims related to energy markets and to optimize storage or extraction strategies. In \cite{gibson:schwartz:1990,schwartz:1997}, the authors proposed a model where the spot price of a commodity$(S_t, t \geq 0)$ depends on a second factor $(\delta_t, t \geq 0)$, referred to as the instantaneous convenience yield. This factor plays the role of dividends in equity markets and models the benefit of holding the physical commodity or the storage and maintenance costs required to keep the commodity. In this model, this convenience yield is described as an Ornstein-Uhlenbeck process:
 \begin{align*}
 \rmd S_{t} & = (r-\delta_{t})S_{t}\rmd t+\sigma S_{t} \rmd W_{t}^{1} \eqsp,\\
@@ -640,12 +640,13 @@ where the parameter $\left(r, \sigma, \kappa, \alpha, \eta, \rho \right)$ are co
 \end{align*}
 where $(a_t)_{t\ge 0}$ is a finite state space Markov process.
 %We assume that $J=2$, each regime characterizing the slope of the future curve. A backwardation regime (resp. contango regime) is defined as a negative slope (resp. a positive slope).
-Statistical estimation is performed using market observations and cannot be done directly under the risk-neutral probability but under the historical probability $\mathbb{P}$. It is assumed that each factor (spot, convenience yield) has its own constant market price of risk, $\lambda^S$ for $S_t$ and $\lambda^{\delta}$ for $\delta_t$. The historical dynamics of the Gibson-Schwartz model is then described as follows:
-\begin{align*}
-\rmd S_{t} & = (\mu -\delta_{t})S_{t}\rmd t+\sigma_{a_t} S_{t} \rmd \widetilde{W}_{t}^{1} \eqsp,\\
-\rmd \delta_{t} & = \kappa_{a_t}(\widetilde{\alpha}_{a_t}-\delta_{t})\rmd t+\eta_{a_t} \rmd \widetilde{W}_{t}^{2} \eqsp, \quad \rmd \langle \widetilde{W}_t^1, \widetilde{W}_t^2\rangle = \rho \rmd t\eqsp,
-\end{align*}
-where $( (\widetilde{W}_t^1,\widetilde{W}_t^2), t \geq 0)$ are standard Brownian motions under the historical probability $\mathbb{P}$ with  correlation $\rho_{a_t}$, $\mu = r - \lambda^S$ and $\widetilde{\alpha}_{a_t} = \alpha_{a_t} - \lambda^{\delta}/\kappa_{a_t} $. This model allows to exhibit fundamental features of commodity future prices, which typically display different regimes of volatility and/or convenience yield. A two-regime model is already sufficient to produce stylized effects such as contango (increase of future prices) and backwardation (decrease of future prices).  Assuming that the switching rate between regimes is small compared to the inverse of the discretization period, the discretized version of the spot price and convenience yield $Z_i= (\ln S_i, \delta_i)$ (the sampling period is taken to be 1) is modeled as a Conditionally Linear Gaussian Model. The explicit integration of this SDE detailed in Lemma~\ref{lem:integratedSDE} yields the following discrete time model for $(Z_i)_{i\ge 0}$:
+%Statistical estimation is performed using market observations and cannot be done directly under the risk-neutral probability but under the historical probability $\mathbb{P}$. It is assumed that each factor (spot, convenience yield) has its own constant market price of risk, $\lambda^S$ for $S_t$ and $\lambda^{\delta}$ for $\delta_t$. The historical dynamics of the Gibson-Schwartz model is then described as follows:
+%\begin{align*}
+%\rmd S_{t} & = (\mu -\delta_{t})S_{t}\rmd t+\sigma_{a_t} S_{t} \rmd \widetilde{W}_{t}^{1} \eqsp,\\
+%\rmd \delta_{t} & = \kappa_{a_t}(\widetilde{\alpha}_{a_t}-\delta_{t})\rmd t+\eta_{a_t} \rmd \widetilde{W}_{t}^{2} \eqsp, \quad \rmd \langle \widetilde{W}_t^1, \widetilde{W}_t^2\rangle = \rho \rmd t\eqsp,
+%\end{align*}
+%where $( (\widetilde{W}_t^1,\widetilde{W}_t^2), t \geq 0)$ are standard Brownian motions under the historical probability $\mathbb{P}$ with  correlation $\rho_{a_t}$, $\mu = r - \lambda^S$ and $\widetilde{\alpha}_{a_t} = \alpha_{a_t} - \lambda^{\delta}/\kappa_{a_t} $. 
+This model allows to exhibit fundamental features of commodity future prices, which typically display different regimes of volatility and/or convenience yield. A two-regime model is already sufficient to produce stylized effects such as contango (increase of future prices) and backwardation (decrease of future prices).  Assuming that the switching rate between regimes is negligible compared to the inverse of the discretization period, the discretized version of the spot price and convenience yield $Z_i= (\ln S_i, \delta_i)$ (the sampling period is taken to be 1) is modeled as a Conditionally Linear Gaussian Model. The explicit integration of this SDE detailed in Lemma~\ref{lem:integratedSDE} yields the following discrete time model for $(Z_i)_{i\ge 0}$:
 \[
 Z_i = d_{a_{i-1}} + T_{a_{i-1}} Z_{i-1} + H_{a_{i-1}} \varepsilon_i\eqsp,
 \]
@@ -665,16 +666,16 @@ Z_i = d_{a_{i-1}} + T_{a_{i-1}} Z_{i-1} + H_{a_{i-1}} \varepsilon_i\eqsp,
 where (with $\barH_{a_{i-1}} \eqdef H_{a_{i-1}}H'_{a_{i-1}}$ and $\Delta t_i = t_i-t_{i-1}$):
 \begin{align*}
 d_{a_{i-1}} &\eqdef
-\begin{pmatrix} \left[\mu- \widetilde{\alpha}_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \Delta t_i + \widetilde{\alpha}_{a_{i-1}}[1-e^{-\kappa_{a_{i-1}} \Delta t_i}]/\kappa_{a_{i-1}}\\
-\widetilde{\alpha}_{a_{i-1}} [1-e^{-\kappa_{a_{i-1}} \Delta t_i}] \end{pmatrix}\eqsp,\\
+\begin{pmatrix} \left[\mu- \alpha_{a_{i-1}} - \sigma^2_{a_{i-1}}/2 \right] \Delta t_i + \alpha_{a_{i-1}}[1-\rme^{-\kappa_{a_{i-1}} \Delta t_i}]/\kappa_{a_{i-1}}\\
+\alpha_{a_{i-1}} [1-\rme^{-\kappa_{a_{i-1}} \Delta t_i}] \end{pmatrix}\eqsp,\\
 T_{a_{i-1}} &\eqdef
-\begin{pmatrix} 1 & -[1-e^{-\kappa_{a_{i-1}} \Delta t_i}]/\kappa_{a_{i-1}} \\ 0 & e^{-\kappa_{a_{i-1}} \Delta t_i} \end{pmatrix} \eqsp,\\
-\barH_{a_{i-1}}(1,1) &= \sigma^2_{a_{i-1}} \Delta t_i + \eta^2_{a_{i-1}}\left\{\Delta t_i + (1-e^{-2\kappa_{a_{i-1}} \Delta t_i})/(2\kappa_{a_{i-1}}) - 2(1-e^{-\kappa \Delta t_i})/\kappa_{a_{i-1}}\right\}/\kappa_{a_{i-1}}^2 \\
-&\hspace{5.2cm} - 2\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}\left\{ \Delta t_i - (1-e^{-\kappa_{a_{i-1}} \Delta t_i})/\kappa_{a_{i-1}} \right\}/\kappa\eqsp, \\
-\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa_{a_{i-1}}\right)\left(1-e^{-\kappa_{a_{i-1}}\Delta t_i} \right)/\kappa_{a_{i-1}} \\
-&\hspace{5.2cm}+ \eta^2_{a_{i-1}}\left(1-e^{-2\kappa_{a_{i-1}} \Delta t_i} \right)/(2\kappa_{a_{i-1}}^2)\eqsp,\\
+\begin{pmatrix} 1 & -[1-\rme^{-\kappa_{a_{i-1}} \Delta t_i}]/\kappa_{a_{i-1}} \\ 0 & \rme^{-\kappa_{a_{i-1}} \Delta t_i} \end{pmatrix} \eqsp,\\
+\barH_{a_{i-1}}(1,1) &= \sigma^2_{a_{i-1}} \Delta t_i + \eta^2_{a_{i-1}}\left\{\Delta t_i + (1-\rme^{-2\kappa_{a_{i-1}} \Delta t_i})/(2\kappa_{a_{i-1}}) - 2(1-\rme^{-\kappa \Delta t_i})/\kappa_{a_{i-1}}\right\}/\kappa_{a_{i-1}}^2 \\
+&\hspace{5.2cm} - 2\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}\left\{ \Delta t_i - (1-\rme^{-\kappa_{a_{i-1}} \Delta t_i})/\kappa_{a_{i-1}} \right\}/\kappa\eqsp, \\
+\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa_{a_{i-1}}\right)\left(1-\rme^{-\kappa_{a_{i-1}}\Delta t_i} \right)/\kappa_{a_{i-1}} \\
+&\hspace{5.2cm}+ \eta^2_{a_{i-1}}\left(1-\rme^{-2\kappa_{a_{i-1}} \Delta t_i} \right)/(2\kappa_{a_{i-1}}^2)\eqsp,\\
 \barH_{a_{i-1}}(2,1) &= \barH_{a_{i-1}}(1,2)\eqsp,\\
-\barH_{a_{i-1}}(2,2) &= \eta^2_{a_{i-1}}\left( 1-e^{-2\kappa_{a_{i-1}}\Delta t_i} \right)/(2\kappa_{a_{i-1}})\eqsp.
+\barH_{a_{i-1}}(2,2) &= \eta^2_{a_{i-1}}\left( 1-\rme^{-2\kappa_{a_{i-1}}\Delta t_i} \right)/(2\kappa_{a_{i-1}})\eqsp.
 \end{align*}
 %Remarks que the equations \eqref{eq:modele} under the pricing measure $\mathbb{Q}$ becomes:
 %\begin{equation}
@@ -699,7 +700,6 @@ T_{a_{i-1}} &\eqdef
 %\widetilde{\alpha}_{a_{i-1}} [1-e^{-\kappa \Delta t_i}] \end{pmatrix}\eqsp,
 %\]
 %The transition matrix $Q$ is assumed to be the same under the pricing measure.
-\subsubsection*{Observation model}
 The observations are Wednesday future contracts of the West Texas Intermediate crude oil (WTI) traded in the Chicago Mercantile Exchange (CME) from $11$ January 1995 to $13$ November 2013. The contracts are numbered $F_1, F_2, \ldots, F_{36}$ where $F_1$ (or front month) is the earliest delivery future contract, $F_2$ is the second earliest delivery future contract and so on. Among these $36$ contracts, the four future contracts: $F_1, F_4, F_6, F_{13}$ are used since their trading volumes and their impacts on the Term Structures are the most important ($F_1$ is the most liquid contract, $F_{13}$ characterizes the gap between prices over a one year period, $F_4$ and $F_6$ are intermediate future contracts that are mostly traded). As in \cite{almansour:2016}, we consider that each  future contract has a fixed time to maturity: $F_1, F_4, F_6, F_{13}$ have time to  maturity $4$, $16$, $26$, $56$ weeks.  Our time series contains $n =975$ weekly data with $534$ in backwardation and $441$ in contango (the backwardation effect is more frequent with crude oil data). At each time $t_i = i\Delta t$, with $\Delta t = 0.0192$, the observations of the $\dimy = 4$ future prices are $Y_i \eqdef (\ln(F^{(market)}_{i\Delta t,m_1}), \ldots, \ln(F^{(market)}_{i\Delta t,m_{\dimy}}))'$, where $F_{t_i,m}$ is the future price at $t_i$ for a maturity  $m$ weeks.
 %In addition, the backwardation is more likely to stay in backwardation than switch to contango and the same holds for the contango regime.
 
@@ -790,8 +790,7 @@ As the function $\theta\mapsto Q^N(\theta,\theta_p)$ cannot be maximized analyti
 
 %Contrary to \cite{almansour:2014}, we calculate the exact time to maturity for each day and each future contract. For example, on $19-05-2010$ the time to maturity of the front contract $F_1$ is only $1$ day (the earliest expiration date is $20-05-2010$) but it is considered with a time to maturity $1$ month in \cite{almansour:2014}. Our calculus takes into account exactly the real time to maturity.
 
-\subsubsection*{Numerical results}
-\label{sec:crudeoil}
+\subsection{Numerical results}
 %Following \cite{carmona:ludkovski:2004}, under the risk neutral probability $\mathbb{Q}$, we assume that the spot price $S_t$ of the Chicago Mercantile Exchange (CME) crude oil and its associated convenience yield $\delta_t$ are solutions to the SDE:
 %\begin{align*}
 %\rmd S_t &= \left(\tilde{\mu}_{a_{t}} - \delta_t\right) S_t \rmd t + \sigma_{a_t} S_t \rmd \tilde{W}^1_t \eqsp,\\
