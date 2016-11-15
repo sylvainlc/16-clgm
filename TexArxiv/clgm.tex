@@ -672,8 +672,7 @@ T &\eqdef
 \begin{pmatrix} 1 & -[1-\rme^{-\kappa \Delta}]/\kappa \\ 0 & \rme^{-\kappa \Delta}  \end{pmatrix} \eqsp,\\
 \barH_{a_{i-1}}(1,1) &= \sigma^2_{a_{i-1}} \Delta + \eta^2_{a_{i-1}}\left\{\Delta  + (1-\rme^{-2\kappa \Delta})/(2\kappa) - 2(1-\rme^{-\kappa \Delta})/\kappa\right\}/\kappa^2 \\
 &\hspace{4.4cm} - 2\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}\left\{ \Delta t_i - (1-\rme^{-\kappa \Delta})/\kappa \right\}/\kappa\eqsp, \\
-\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa \right)\left(1-\rme^{-\kappa \Delta}} \right)/\kappa} \\
-&\hspace{7.8cm}+ \eta^2_{a_{i-1}}\left(1-\rme^{-2\kappa \Delta}} \right)/(2\kappa^2)\eqsp,\\
+\barH_{a_{i-1}}(1,2) & = \left(\rho_{a_{i-1}} \eta_{a_{i-1}} \sigma_{a_{i-1}}-\eta^2_{a_{i-1}}/\kappa \right)\left(1-\rme^{-\kappa \Delta} \right)/\kappa + \eta^2_{a_{i-1}}\left(1-\rme^{-2\kappa \Delta} \right)/(2\kappa^2)\eqsp,\\
 \barH_{a_{i-1}}(2,1) &= \barH_{a_{i-1}}(1,2)\eqsp,\\
 \barH_{a_{i-1}}(2,2) &= \eta^2_{a_{i-1}}\left( 1-\rme^{-2\kappa \Delta} \right)/(2\kappa)\eqsp.
 \end{align*}
@@ -753,7 +752,7 @@ p_{\theta}(a_{1:n},z_{1:n},Y_{1:n}) \eqdef \pi(a_1)\phi_{\mu_1,\Sigma_1}(z_1)g_{
 \end{equation*}
 where $\phi_{\mu_1,\Sigma_1}$ is the Gaussian probability density function with mean $\mu_1$ and variance $\Sigma_1$.
 Denote by $\mathbb{E}_{\theta}\left[\cdot\middle|Y_{1:n}\right]$  the conditional expectation given $Y_{1:n}$ when the parameter value is $\theta$. The EM algorithm iteratively builds a sequence $\{\theta_{p}\}_{p\ge 0}$ of parameter estimates following the two steps:
-\begin{enumerate}%[label=\roman*)]
+\begin{enumerate}
 	\item {\bf E-step}: compute $\theta \mapsto Q(\theta,\theta_{p})\eqdef \mathbb{E}_{\theta_p}\left[\log p_{\theta}(X_{1:n},Y_{1:n})\middle|Y_{1:n}\right]$ ;
 	\item {\bf M-step}: choose $\theta_{p+1}$ as a maximizer of $\theta \mapsto Q(\theta,\theta_{p})$.
 \end{enumerate}
