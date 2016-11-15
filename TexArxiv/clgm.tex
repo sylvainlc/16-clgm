@@ -477,7 +477,7 @@ with
 \Delta_{i}(a_{i+1:n}) &= \left(I_{\dimz} + H'_{a_{i+1}}\tilde{P}_{i+1}^{-1}(a_{i+1:n})H_{a_{i+1}}\right)^{-1}\eqsp,\\
 \tilde{r}_{i|i+1}(a_{i+1:n})&= \tilde{\nu}_{i+1}(a_{i+1:n}) + \barH_{a_{i+1}}^{-1}d_{a_{i+1}}\eqsp,\\
 \tilde{c}_{i|i+1}(a_{i+1:n}) &= \tilde{c}_{i+1}(a_{i+1:n}) + \log|\barH_{a_{i+1}}| + d'_{a_{i+1}}\barH_{a_{i+1}}^{-1}d_{a_{i+1}}-\log|H_{a_{i+1}}\Delta_{i}(a_{i+1:n})H'_{a_{i+1}}|\\
-&\hspace{6cm} - \tilde{r}'_{i|i+1}(a_{i+1:n})H_{a_{i+1}}\Delta_{i}(a_{i+1:n})H'_{a_{i+1}}\tilde{r}_{i|i+1}(a_{i+1:n})\eqsp,\\
+&\hspace{4.0cm} - \tilde{r}'_{i|i+1}(a_{i+1:n})H_{a_{i+1}}\Delta_{i}(a_{i+1:n})H'_{a_{i+1}}\tilde{r}_{i|i+1}(a_{i+1:n})\eqsp,\\
 \tilde{P}_{i|i+1}^{-1}(a_{i+1:n}) &=T'_{a_{i+1}}\left(I_{\dimz}-\barH_{a_{i+1}}^{-1}H_{a_{i+1}}\Delta_{i}(a_{i+1:n})H'_{a_{i+1}}\right)\barH_{a_{i+1}}^{-1}T_{a_{i+1}}\eqsp,\\
 \tilde{\nu}_{i|i+1}(a_{i+1:n})&=T'_{a_{i+1}}\barH_{a_{i+1}}^{-1}\left[-d_{a_{i+1}}+H_{a_{i+1}}\Delta_{i}(a_{i+1:n})H'_{a_{i+1}}\left(\tilde{\nu}_{i+1}(a_{i+1:n})+\barH_{a_{i+1}}^{-1}d_{a_{i+1}}\right)\right]\eqsp.
 \end{align*}
@@ -499,7 +499,7 @@ Then, by \eqref{eq:smooth:t}, the SMC approximation $t^N_{i}(a_i,z_i,y_{i+1:n})$
 \begin{align}
 t^N_{i}(a_i,z_i,y_{i+1:n}) &=\sum_{a_{i+1}=1}^J\int_{z_{i+1}}m_{}(a_{i+1},z_{i};z_{i+1})Q(a_{i},a_{i+1})p^N_{}(y_{i+1:n}|a_{i+1},z_{i+1}) \rmd z_{i+1}\eqsp,\nonumber\\
 &=  \tilde{p}_{i+1}(y_{i+1:n}) \sum_{\ell=1}^N C_i^{-1}(\tilde{a}^{\ell}_{i+1:n}) Q(a_i, \tilde{a}^{\ell}_{i+1}) \tilde{\omega}^{\ell}_{i+1} |\barH_{\tilde{a}^{\ell}_{i+1}}|^{-1/2} |H_{\tilde{a}^{\ell}_{i+1}} \Delta^{\ell}_i H'_{\tilde{a}^{\ell}_{i+1}}|^{1/2} \eqsp\nonumber \\
-&\hspace{4.3cm} \times \exp\left\{\frac{1}{2} (\delta^{\ell}_i)'H_{\tilde{a}^{\ell}_{i+1}}\Delta^{\ell}_iH'_{\tilde{a}^{\ell}_{i+1}} \delta^{\ell}_i -\frac{1}{2}\normMat{\barH_{\tilde{a}^{\ell}_{i+1}}}{d_{\tilde{a}^{\ell}_{i+1}}+T_{\tilde{a}^{\ell}_{i+1}}z_i}^2\right\} \eqsp,\\
+&\hspace{2.3cm} \times \exp\left\{\frac{1}{2} (\delta^{\ell}_i)'H_{\tilde{a}^{\ell}_{i+1}}\Delta^{\ell}_iH'_{\tilde{a}^{\ell}_{i+1}} \delta^{\ell}_i -\frac{1}{2}\normMat{\barH_{\tilde{a}^{\ell}_{i+1}}}{d_{\tilde{a}^{\ell}_{i+1}}+T_{\tilde{a}^{\ell}_{i+1}}z_i}^2\right\} \eqsp,\\
 &= \sum_{\ell=1}^N\tilde{\omega}_{\mathsf{b},i}^\ell(a_i)\exp\left\{-\frac{1}{2}\normMat{\tilde{S}_{i+1}^\ell}{z_i}^2+z_i'\tilde{s}_{i+1}^\ell\right\}\eqsp,\label{eq:tN}
 \end{align}
 where
@@ -855,11 +855,12 @@ In Gibson-Schwartz model \cite{gibson:schwartz:1990}, a stronger backwardation e
 
 As expected, we obtain $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$, $\eta_1 \geq \eta_2$ and $\rho_1 \geq \rho_2$ at convergence of the EM algorithm. Moreover, $Q(1,1) > Q(2,2)$ is corresponding to the prediction that we did from the data description. From the results, $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$ indicates the first regime (backwardation) characterized by a higher value in both volatility and equilibrium level of convenience yield, and the second regime (contango) characterized by a lower value in both volatility and equilibrium convenience yield level. This in accordance with the theory of storage that the volatility of the commodity spot price is high when the inventory is low, and the convenience yield is all the higher as inventory is low.
 
-Interestingly, we see that $\lambda^{\delta}_1 \geq \lambda^{\delta}_2$ \footnote{\cite{almansour:2016} obtain the same result in the opposite order, because of their definition of the historical mean-reverting value} and the two historical mean-reverting values are $\widetilde{\alpha}_1 = 0.0073$ and $\widetilde{\alpha}_2 = 0.0305$. This underlines that, while the first regime of convenience yield under $\mathbb{P}$ makes spot price be more likely to increase (with a smaller historical mean-reverting), the term structure of future prices has a tendency to be in backwardation.
-	This also shows opposite behaviors of historical prices evolution and term structure future prices. Intuitively, Figure~\ref{fig:LogPriceTermStructure:data} compares the evolution of future $1M$ (the nearest contracts) to the term structure observed from CME WTI crude oil. The term structure is measured by the difference of future $13M$ and future $1M$ to avoid the eventual saisonality. The figure shows that it is not necessary to have an inverse relationship between the evolution of price and term structure. But when a significant drop in price occurs, the term structure measured as $F_{13} - F_1$ increases (i.e. in contango).
+%Interestingly, we see that $\lambda^{\delta}_1 \geq \lambda^{\delta}_2$ \footnote{\cite{almansour:2016} obtain the same result in the opposite order, because of their definition of the historical mean-reverting value} and the two historical mean-reverting values are $\widetilde{\alpha}_1 = 0.0073$ and $\widetilde{\alpha}_2 = 0.0305$. This underlines that,
+
+Figure~\ref{fig:LogPriceTermStructure:data} compares the evolution of future $1M$ (the nearest contracts) to the \emph{term structure} observed from CME WTI crude oil, defined as the difference of future $13M$ and future $1M$ (to avoid seasonality). The figure shows that it is not necessary to have an inverse relationship between the  price of the nearest contract and the term structure. But when a significant drop in the price  of the nearest contract occurs, the term structure increases (i.e. in contango).
 \begin{figure}
 \centering
-\includegraphics[scale=.6]{LogPrice_TermStructure}
+\includegraphics[scale=.6,angle=90]{LogPrice_TermStructure}
 \caption{Log-price (red line) and slope of future curves (blue line)}
 \label{fig:LogPriceTermStructure:data}
 \end{figure}
@@ -871,8 +872,7 @@ Interestingly, we see that $\lambda^{\delta}_1 \geq \lambda^{\delta}_2$ \footnot
 %\end{verbatim}
 
 
-The correlation between the spot price and the convenience yield is positive and high in both two regimes. The positive correlation verifies one of the fundamental principes in commodity market as in \cite{gibson:schwartz:1990}. That explains when the spot prices are expected to inscrease, the convenience yield are also expected to inscrease. In addition, the higher the correlation is, the more the slope of future curve descreases in function of maturity. It descreases even further in the first regime (in backwardation): the higher volatility higher convenience yield with the higher correlation.
-
+The correlation between the spot price and the convenience yield is positive and high in both two regimes. This is an accordance to what as been observed in most commodity market; see \cite{gibson:schwartz:1990}.  The slope of future curve decreases in function of maturity. 
 
 Figure~\ref{fig:posterior:data} and~\ref{fig:posterior:data:logprice} displays the the estimated posterior probabilities of the regime labels and the observed future slope. When the future curve is in backwardation (resp. contango), the model is expected to be in the first regime (resp. second regime), except for the period where the slope of the future curve is too small and in the period from December $2008$ to April $2009$ (beginning of the crisis).
 
@@ -891,7 +891,7 @@ Figure~\ref{fig:posterior:data} and~\ref{fig:posterior:data:logprice} displays t
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=.6]{Posterior_Data}
+	\includegraphics[scale=.75,angle=90]{Posterior_Data}
 	\caption{Posterior probability (triangle black) and slope of future curves (blue line)}
 	\label{fig:posterior:data}
 \end{figure}
