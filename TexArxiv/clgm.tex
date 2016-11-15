@@ -94,7 +94,7 @@ The paper is organized as follows. The proposed modification of the fully Rao Bl
 
 \section{Rao Blackwellised smoothing algorithms}
 \label{sec:RaoBlackwell}
-This section details the Sequential Monte Carlo algorithms which can be used to approximate the conditional distribution of the states $(a_1,\ldots,a_n)$ or the marginal distributions of $(a_i,z_{i})$ given the observations $(Y_1,\ldots,Y_n)$. For all $m\,\times\,m$ matrix  let $|A|$ be the determinant of $A$ if $A$ is positive-definite matrix, for all $z\in\mathbb{R}^{m}$ define
+This section details the Sequential Monte Carlo algorithms which can be used to approximate the conditional distribution of the states $(a_1,\ldots,a_n)$ or the marginal distributions of $(a_i,z_{i})$ given the observations $(Y_1,\ldots,Y_n)$. For all $m\,\times\,m$ matrix  let $|A|$ be the determinant of $A$. If $A$ is a positive-definite matrix, for all $z\in\mathbb{R}^{m}$ define
 \[
 \normMat{A}{z}^2 \eqdef z'A^{-1}z\eqsp.
 \]
@@ -110,11 +110,11 @@ where
 \barG_j \eqdef G_jG'_j\;,\; \barH_{j} \eqdef H_jH'_j\eqsp.
 \]
 %Maximum likelihood estimation of the parameters using the Expectation Maximization algorithm or gradient ascent algorithms requires to compute the posterior distributions of the states $a_{i-1:i},z_{i-1:i}$  given the observations $Y_{1:n}$, written $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$, which cannot be computed in closed-form (the dependency of $\phi^n_{i}$ on $Y_{1:n}$ is dropped for better clarity). SMC methods provide a class of importance sampling and resampling procedures to approximate $\phi^n_{i}(a_{i-1:i},z_{i-1:i})$.
-All the algorithms considered in this paper are based on forward-backward or two-filter decompositions of the smoothing distributions and share the same forward filter detailed in Section~\ref{sec:forward}.
+All the algorithms considered in this paper are based on forward-backward or two-filter decompositions of the smoothing distributions and share the same forward filter presented in Section~\ref{sec:forward}.
 
 \subsection{Forward filter}
 \label{sec:forward}
-The SMC approximation $p^N_{}(a_{1:i},z_{i}|y_{1:i})$ of $p_{}(a_{1:i},z_{i}|y_{1:i})$ may be obtained using a standard Rao Blackwellised  algorithm. The procedure produces a sequence of trajectories $(a^k_{1:i})_{1\le k \le N}$ associated with importance weights $(\omega^k_{i})_{1\le k \le N}$ used to define the following approximation of $p_{}(a_{1:i},z_{i}|y_{1:i})$:
+The SMC approximation $p^N_{}(a_{1:i},z_{i}|y_{1:i})$ of $p_{}(a_{1:i},z_{i}|y_{1:i})$ may be obtained using a standard Rao Blackwellised  algorithm. The procedure produces a sequence of trajectories $(a^k_{1:i})_{1\le k \le N}$ associated with normalized importance weights $(\omega^k_{i})_{1\le k \le N}$ ($\sum_{k=1}^N \omega^k_i = 1$) used to define the following approximation of $p_{}(a_{1:i},z_{i}|y_{1:i})$:
 \begin{equation}
 \label{eq:forward:SMC}
 p^N_{}(a_{1:i},z_{i}|y_{1:i}) = \sum_{k=1}^N\delta_{a^k_{1:i}}(a_{1:i})\,\omega^k_{i}\,p_{}(z_{i}|a^k_{1:i},y_{1:i})\eqsp.
@@ -224,7 +224,7 @@ Then, in both cases, all particles such that $\tilde{\Omega}^{j,k}_{i} = 0$ are 
 
 
 \subsection{Algorithm based on the structural approximation of \cite{kim:1994}, \cite{barber:2006}}
-The method to approximate the smoothing distributions of the rzgimes given all the observations proposed by \cite{barber:2006} relies on an tractable approximation of $p(a_i|a_{i+1:n},y_{1:n})$. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$ approximating the filtering distributions are available. Then, note that, for all $1\le i\le n$,
+The method to approximate the smoothing distributions of the regimes given all the observations proposed by \cite{barber:2006} relies on an approximation of $p(a_i|a_{i+1:n},y_{1:n})$, which is hardly justified and may introduce some bias. Assume first that the particles and importance weights $(a_i^k,\omega_i^k)_{1\le k \le N}$, $1\le i\le n$ approximating the filtering distributions are available. Then, note that, for all $1\le i\le n$,
 \[
 p(a_{i:n}|y_{1:n}) = p(a_{i}|a_{i+1:n},y_{1:n})p(a_{i+1:n}|y_{1:n})\eqsp.
 \]
