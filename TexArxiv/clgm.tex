@@ -715,14 +715,14 @@ Y_i = c_{a_i} + B Z_i + G \eta_i\eqsp,
 \]
 where $\xi_i$ is a standard multivariate Gaussian random variable and:
 \[
-c_{j}' = \begin{pmatrix} \mathsf{A}_{m_1}(j) & \ldots & \mathsf{A}_{m_{\dimy}}(j) \end{pmatrix}\eqsp,
+c_{j}' = [ \mathsf{A}_{m_1}(j), \dots, \mathsf{A}_{m_{\dimy}}(j) ]\eqsp,
 \;\;\;
-B' = \begin{pmatrix}\mathsf{B}_{m_1}' &  \ldots & \mathsf{B}_{m_{\dimy}}' \end{pmatrix}\eqsp, \;\;\;
-G = \mathrm{diag}(g_1, \ldots , g_{d} )\eqsp.
+B' = [\mathsf{B}_{m_1}',  \dots, \mathsf{B}_{m_{\dimy}}']\eqsp, \;\;\;
+G = \mathrm{diag}(g_1, \dots , g_{d} )\eqsp.
 \]
-The model is then driven by the parameter:
+The model depends of the parameters:
 \[
-\theta \eqdef \{\pi, Q, \mu_1, \Sigma_1, \kappa, (\alpha_j)_{1\leq j\leq J}, (\sigma_j)_{1\leq j\leq J}, (\eta_j)_{1\leq j\leq J}, (\rho_j)_{1\leq j\leq J}, \mu, (\lambda_j)_{1\leq j\leq J}, (g_{\ell})_{1\leq \ell\leq d} \}\eqsp.
+\theta \eqdef \{\pi, Q, \mu_1, \Sigma_1, \kappa, (\alpha_j)_{1\leq j\leq J}, (\sigma_j)_{1\leq j\leq J}, (\eta_j)_{1\leq j\leq J}, (\rho_j)_{1\leq j\leq J}, \mu, (\lambda_j)_{1\leq j\leq J}, (g_{\ell})_{1\leq \ell\leq d} \}\eqsp .
 \]
 The aim of this section is to estimate $\theta$ and the posterior probabilities $\mathbb{P}(a_k=j|Y_{1:n})$, $1\le k \le n$, $1\le j \le J$. Given the observations $Y_{1:n}$, the EM algorithm introduced in \cite{dempster:laird:rubin:1977} maximizes the incomplete data log-likelihood $\theta\mapsto \ell_{\theta}^{n}$ defined by
 \begin{equation*}
@@ -735,7 +735,7 @@ where the complete data likelihood $p_{\theta}$ is given by
 p_{\theta}(a_{1:n},z_{1:n},Y_{1:n}) \eqdef \pi(a_1)\phi_{\mu_1,\Sigma_1}(z_1)g_{\theta}(a_1,z_1;Y_1)\prod^{n}_{i=2}Q(a_{i-1},a_i)m_{\theta}\left(a_{i},z_{i-1};z_i\right)g_{\theta}(a_i,,z_i;Y_i)\eqsp,
 \end{equation*}
 where $\phi_{\mu_1,\Sigma_1}$ is the Gaussian probability density function with mean $\mu_1$ and variance $\Sigma_1$.
-Denote by $\mathbb{E}_{\theta}\left[\cdot\middle|Y_{1:n}\right]$  the conditional expectation given $Y_{1:n}$ when the parameter value is $\theta$. The EM algorithm iteratively builds a sequence $\{\theta_{p}\}_{p\ge 0}$ of parameter estimates following the two steps:
+Denote by $\mathbb{E}_{\theta}\left[\cdot\middle|Y_{1:n}\right]$  the conditional expectation given $Y_{1:n}$ when the parameter value is set to $\theta$. The EM algorithm iteratively builds a sequence $\{\theta_{p}\}_{p\ge 0}$ of parameter estimates following the two steps:
 \begin{enumerate}
 	\item {\bf E-step}: compute $\theta \mapsto Q(\theta,\theta_{p})\eqdef \mathbb{E}_{\theta_p}\left[\log p_{\theta}(X_{1:n},Y_{1:n})\middle|Y_{1:n}\right]$ ;
 	\item {\bf M-step}: choose $\theta_{p+1}$ as a maximizer of $\theta \mapsto Q(\theta,\theta_{p})$.
@@ -853,7 +853,8 @@ In Gibson-Schwartz model \cite{gibson:schwartz:1990}, a stronger backwardation e
 
 %Remarks that the changement of $Q$ influences basically on the model parameters. A bad value of $Q$ can lead the parameters not to follow a good order in fonction of regimes. To prevent this trouble, our technique is firstly to fix the initial transition matrix $Q$ for the $100$ first iterations. That aids the model parameters to stabilize in a good order. More clearly in our experiment, fixing $Q(1,1) = 0.98, \; Q(2,2) = 0.97$ up to 100 iterations drives CMAES to give a good order $\sigma_1 \geq \sigma_2$ $\alpha_1 \geq \alpha_2$, $\eta_1 \geq \eta_2$ and $\rho_1 \geq \rho_2$. When we no longer fix $Q$ after $100$ iterations, such the parameters in return conduct $\{Q(1,1), \; Q(2,2)\}$ to be in the good order.
 
-As expected, we obtain $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$, $\eta_1 \geq \eta_2$ and $\rho_1 \geq \rho_2$ at convergence of the EM algorithm. Moreover, $Q(1,1) > Q(2,2)$ is corresponding to the prediction that we did from the data description. From the results, $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$ indicates the first regime (backwardation) characterized by a higher value in both volatility and equilibrium level of convenience yield, and the second regime (contango) characterized by a lower value in both volatility and equilibrium convenience yield level. It verifies the theory of storage that the volatility of the commodity spot price is high when the inventory is low, and the convenience yield is all the higher as inventory is low.
+As expected, we obtain $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$, $\eta_1 \geq \eta_2$ and $\rho_1 \geq \rho_2$ at convergence of the EM algorithm. Moreover, $Q(1,1) > Q(2,2)$ is corresponding to the prediction that we did from the data description. From the results, $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$ indicates the first regime (backwardation) characterized by a higher value in both volatility and equilibrium level of convenience yield, and the second regime (contango) characterized by a lower value in both volatility and equilibrium convenience yield level. This in accordance with the theory of storage that the volatility of the commodity spot price is high when the inventory is low, and the convenience yield is all the higher as inventory is low.
+
 Interestingly, we see that $\lambda^{\delta}_1 \geq \lambda^{\delta}_2$ \footnote{\cite{almansour:2016} obtain the same result in the opposite order, because of their definition of the historical mean-reverting value} and the two historical mean-reverting values are $\widetilde{\alpha}_1 = 0.0073$ and $\widetilde{\alpha}_2 = 0.0305$. This underlines that, while the first regime of convenience yield under $\mathbb{P}$ makes spot price be more likely to increase (with a smaller historical mean-reverting), the term structure of future prices has a tendency to be in backwardation.
 	This also shows opposite behaviors of historical prices evolution and term structure future prices. Intuitively, Figure~\ref{fig:LogPriceTermStructure:data} compares the evolution of future $1M$ (the nearest contracts) to the term structure observed from CME WTI crude oil. The term structure is measured by the difference of future $13M$ and future $1M$ to avoid the eventual saisonality. The figure shows that it is not necessary to have an inverse relationship between the evolution of price and term structure. But when a significant drop in price occurs, the term structure measured as $F_{13} - F_1$ increases (i.e. in contango).
 \begin{figure}
