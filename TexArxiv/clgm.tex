@@ -1,7 +1,7 @@
 \include{clgm_def}
 \begin{document}
 
-\title{Rao-Blackwellized  smoother for Conditionally Linear and Gaussian models}
+\title{A survey of Rao-Blackwellized Sequential Monte Carlo smoothers for Conditionally Linear and Gaussian models}
 \date{}
 
 \author{Ngoc Minh Nguyen\footnote{LTCI, CNRS and T\'el\'ecom ParisTech, 46 rue Barrault 75634 Paris Cedex 13, France.}, Sylvain {L}e {C}orff\footnote{Laboratoire de Math\'ematiques d'Orsay, Univ. Paris-Sud, CNRS, Universit\'e Paris-Saclay, 91405 Orsay, France.} and Eric Moulines\footnote{Centre de Math\'ematiques Appliqu\'ees, UMR 7641, Ecole Polytechnique, France.}}
@@ -12,36 +12,14 @@
 \maketitle
 
 \begin{abstract}
-This paper focuses on Sequential Monte Carlo based approximations of smoothing distributions in conditionally linear and Gaussian state spaces. To reduce Monte Carlo variance of smoothers, it is typical in these models to use Rao-Blackwellisation. Particle approximation is used to sample the sequence of the hidden regimes; the gaussian state sequence are then explicitly integrated conditional to the sequence of regimes and observations, using variants of the Kalman filter / smoother. The first successful attempt to use Rao-Blackwellisation for smoothing has been presented in  \cite{briers:doucet:maskell:2010} which extends the Bryson-Frazier smoother for Gaussian linear state space models using the generalized two-filter formula together with Kalman filter / smoother. More recently, in a series of article, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} proposed to use a  forward backward decomposition of the smoothing distribution, mimicking the Rauch-Tung-Striebel smoother for the regime combined with backward Kalman updates.  % In \cite{kim:1994}, a structural approximation of the model is used to simplify the backward pass while \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} use Rao Blackwellisation steps
-In this paper, we provide a survey of these algorithms in a common unifying framework. We then investigate the benefit of introducing an additional rejuvenation step  which allows to sample at each time instant new  regime conditional to the forward and backward particles approximating the regimes.  To support our claims, a limited Monte Carlo study is presented. These procedures are applied to commodity markets which are described using a  factor model based on the spot price and a convenience yield for crude oil data.
-
-
-%In this paper, commodity markets are described using a two factor model based on the spot price and a convenience yield representing the benefit or cost required for holding the physical commodity. It is assumed that the market structure has different regimes which depend on existing stocks and contracts or other externalities. These different regimes are modeled using a finite state space unobserved Markov chain, each regime corresponding to an  equilibrium behavior of the spot price and the convenience yield. At each time step, it is assumed that noisy observations of future contracts are available which leads to represent commodity markets dynamics using a conditionally linear and Gaussian state space model. We propose a new algorithm to approximate the conditional distributions of the states (spot, convenience yield and regime) given a set of observations. These approximations are obtained combining Sequential Monte Carlo methods and Kalman smoothing techniques  and may be used to detect significant regime switching times and to estimate model parameters with an Expectation Maximization based algorithm. The performance of the proposed procedure is assessed with Chicago Mercantile Exchange crude oil data.
+This paper focuses on Sequential Monte Carlo based approximations of smoothing distributions in conditionally linear and Gaussian state spaces. To reduce Monte Carlo variance of smoothers, it is typical in these models to use Rao-Blackwellisation: particle approximation is used to sample the sequence of hidden regimes while the Gaussian states are explicitly integrated conditional on the sequence of regimes and observations, using variants of the Kalman filter / smoother. The first successful attempt to use Rao-Blackwellisation for smoothing has been presented in  \cite{briers:doucet:maskell:2010} which extends the Bryson-Frazier smoother for Gaussian linear state space models using the generalized two-filter formula together with Kalman filters / smoothers. More recently, in a series of article, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} proposed to use a  forward backward decomposition of the smoothing distribution, mimicking the Rauch-Tung-Striebel smoother for the regime combined with backward Kalman updates.  
+In this paper, we provide a survey of these algorithms in a common unifying framework. We then investigate the benefit of introducing an additional rejuvenation step  which allows to sample at each time instant new  regimes conditional on the forward and backward particles.  To support our claims, a Monte Carlo study is presented. These procedures are applied to commodity markets which are described using a two factor model based on the spot price and a convenience yield for crude oil data.
 \end{abstract}
 
 \section{Introduction} \label{sec:intro}
-%Modeling commodity prices is a crucial step to valuate contingent claims related to energy markets and to optimize storage or extraction strategies. In \cite{gibson:schwartz:1990,schwartz:1997}, the authors proposed a model where the spot price of a commodity$(S_t, t \geq 0)$ depends on a second factor $(\delta_t, t \geq 0)$, referred to as the instantaneous convenience yield. This factor plays the role of dividends in equity markets and models the benefit of holding the physical commodity or the storage and maintenance costs required to keep the commodity. In this model, this convenience yield is described as an Ornstein-Uhlenbeck process:
-%\begin{align*}
-%\rmd S_{t} & = (r-\delta_{t})S_{t}\rmd t+\sigma S_{t} \rmd W_{t}^{1} \eqsp,\\
-%\rmd \delta_{t} & = \kappa(\alpha-\delta_{t})\rmd t+\eta \rmd W_{t}^{2} \eqsp, \quad \rmd \langle W_t^1, W_t^2\rangle = \rho \rmd t\eqsp,
-%\end{align*}
-%where the parameter $\left(r, \sigma, \kappa, \alpha, \eta, \rho \right)$ are constant and $( (W_t^1,W_t^2), t \geq 0)$ are standard Brownian motions under the historical probability $\mathbb{P}$. A similar model may be written under the risk-neutral probability $\mathbb{Q}$ with an obvious transformation of the parameters. This convenience yield based model has been extended in \cite{casassus:colin:dufresne:2005,liu:tang:2011}. In this model, the convenience yield is meant to revert to its equilibrium value $\alpha$ at speed $\kappa$.
-%
-%
-%This model appear to be too restrictive as energy markets are not likely to revert to a single equilibrium value. This assumption is relaxed using Markov switching models to allow several possible regimes for the spot price and the convenience yield. The regime switching autoregressive model introduced in \cite{hamilton:1988,hamilton:1989} for the term structure of interest rates has been generalized by \cite{kim:1994} to general state-space models. This Markov switching model also extends the dynamic linear model of \cite{shumway:stoffer:1991} by using a time dependent switching process and introducing regime changes in the observation model. Regime switching models based on an unobserved Markov chain have been widely used to represent commodity prices, see for instance \cite{fong:see:2002} for crude oil data or \cite{mount:ning:cai:2006} for electricity prices. See also \cite{naifar:dohaiman:2013} for a two-regime model (crisis regime and non-crisis regime) to obtain the evidence of a significant correlation between crude oil prices and short-term interest rate during the financial crisis. In \cite{chiarella:clewlow:kang:2009}, a two-factor model for the gas forward price is introduced to model where the parameters of the volatility function may change depending on the market structure. In order to capture gas price dynamics, \cite{chen:forsyth:2010} proposed a single factor model for the crude oil spot price using a mean reverting process with two equilibrium levels. Following \cite{almansour:2016}, the spot price and convenience yield are described in this paper as:
-%\begin{align*}
-%\rmd S_{t} & = (r-\delta_{t})S_{t}\rmd t+\sigma_{a_t} S_{t}\rmd W_{t}^{1} \eqsp,\\
-%\rmd\delta_{t} & = \kappa_{a_t}(\alpha_{a_t} -\delta_{t})\rmd t+\eta_{a_t} \rmd W_{t}^{2} \eqsp, \quad \rmd\langle W_t^1, W_t^2\rangle = \rho_{a_t} \rmd t\eqsp,
-%\end{align*}
-%where $(a_t)_{t\ge 0}$ is a finite state space Markov process.
-%
-%This model allows to exhibit fundamental features of commodity future prices, which typically display different regimes of volatility and/or convenience yield. A two-regime model is already sufficient to produce stylized effects such as contango (increase of future prices) and backwardation (decrease of future prices).
-
-
-%Assuming that the switching rate between regimes is small compared to the inverse of the discretization period, the discretized version of the spot price and convenience yield $Z_k= (\ln S_k, \delta_k)$ (the sampling period is taken to be 1) is modeled as a
 State space models are bivariate stochastic processes $\{(Y_k,Z_k)\}_{k\ge 1}$ where the state sequence $\{Z_k\}_{k\ge 1}$ is a Markov chain which is only partially observed through the sequence $\{Y_k\}_{k\ge 1}$. Conditionally on the state sequence $\{Z_k\}_{k\ge 1}$ the observations are independent and for all $\ell\ge 1$ the conditional distribution of $Y_{\ell}$ given $\{Z_k\}_{k\ge 1}$ depends on $Z_{\ell}$ only. These models are used in a large variety of disciplines such as financial econometrics, biology, signal processing, see \cite{delmoral:2013} and the references therein. In general state space models, bayesian filtering and smoothing problems, i.e. the computation of the posterior distributions of a sequence of states $(Z_{k},\ldots,Z_{p})$ for $1\le k\le p\le \ell$ given observations $(Y_{1},\ldots,Y_{\ell})$, are challenging tasks. Filtering refers to the estimation of the distributions of the hidden state $Z_k$ given the observations $(Y_1,\ldots,Y_k)$ up to time $k$, while fixed-interval smoothing stands for the estimation of the distribution of sequence of states $(Z_{k},\ldots,Z_{p})$ given observations $(Y_{1},\ldots,Y_{\ell})$ with $1\le k\le p<\ell$. 
  
-When the state and observation models are linear and Gaussian, the filtering can be solved explicitly using the Kalman filter \cite{kalman:1960}. Exact solutions of the fixed-horizon smoothing problem can be obtained using either the Rauch-Tung-Striebel smoother \cite{rauch:striebel:tung:1965} or the Bryson-Frazier "two-filter" smoother \cite{bryson:frazier:1963}. %Many extensions of these algorithms based on local linearization methods have been proposed for nonlinear dynamical systems such as extended Kalman filters, iterated Kalman filters, Gaussian sum filters or Se...
+When the state and observation models are linear and Gaussian, filtering can be solved explicitly using the Kalman filter \cite{kalman:1960}. Exact solutions of the fixed-horizon smoothing problem can be obtained using either the Rauch-Tung-Striebel smoother \cite{rauch:striebel:tung:1965} or the Bryson-Frazier "two-filter" smoother \cite{bryson:frazier:1963}. 
 This paper focuses on  Conditionally Linear and Gaussian Models (CLGM) given for $k\ge 1$ by:
 \begin{equation}
 \label{eq:model:state}
@@ -50,12 +28,12 @@ Z_k = d_{a_{k}} + T_{a_{k}}Z_{k-1}+H_{a_{k}}\varepsilon_k\eqsp,
 where
 \begin{enumerate}[-]
 \item $(\varepsilon_k)_{k\ge 1}$ is a sequence of independent and identically distributed (i.i.d.) $\dimz$-dimensional Gaussian vectors with zero mean and identity covariance.
-\item $(a_k)_{k\ge 0}$ is a homogeneous Markov chain taking values in a finite space $\{1,\ldots,J\}$, called \emph{regimes}  %$Q$ denotes the transition matrix of this Markov chain and by $\pi$ its initial distribution.
+\item $(a_k)_{k\ge 0}$ is a homogeneous Markov chain taking values in a finite space $\{1,\ldots,J\}$, called \emph{regimes}.  %$Q$ denotes the transition matrix of this Markov chain and by $\pi$ its initial distribution.
 \item $(H_j)_{1\le j\le J}$ are positive-definite matrices.
-\item \textcolor{red}{j'aurais mis $Z_0$} $Z_1$ is a $\dimz$-dimensional Gaussian random with mean $\mu_1$ and variance $\Sigma_1$ independent of $(\varepsilon_k)_{k\ge 1}$.
+\item $Z_0$ is a $\dimz$-dimensional Gaussian random with mean $\mu_1$ and variance $\Sigma_1$ independent of $(\varepsilon_k)_{k\ge 1}$.
 \end{enumerate}
-\textcolor{red}{après on part de $k=1$}
-At each time step $k\ge 0$, the observation $Y_k$ is given by:
+%\textcolor{red}{après on part de $k=1$}
+At each time step $k\ge 1$, the observation $Y_k$ is given by:
 \begin{equation}
 \label{eq:model:obs}
 Y_k = c_{a_k} + B_{a_k}Z_k + G_{a_k}\eta_k\eqsp,
@@ -82,14 +60,14 @@ The first forward-backward smoother proposed in the literature \cite{fong:godsil
 An alternative approach, based on the so-called  'structural approximation' of the model suggested in an early paper by \cite{kim:1994}, was proposed by \cite{barber:2006} to avoid to sample a 'continuous' state in the backward pass. This approximation is rather ad-hoc and the resulting smoother is not consistent when the number of particles goes to infinity.
 The inaccuracy  introduced by the approximation might be difficult to control.
 
-The first fully Rao Blackwellised SMC smoother which should lead to consistent approximations when the number of particles grows to infinity was proposed by  \cite{briers:doucet:maskell:2010} and extends the Bryson-Frazier smoother for Gaussian linear state space models using the generalized two-filter formula with Rao Blackwellisation steps for the forward and the backward filters.  This two-filter approach combines a forward and a backward filters which are approximated numerically using SMC for the regime sequence and Kalman filtering techniques for the hidden linear states.
+The first fully Rao Blackwellised SMC smoother which should lead to consistent approximations when the number of particles grows to infinity was proposed by  \cite{briers:doucet:maskell:2010} and extends the Bryson-Frazier smoother for Gaussian linear state space models using the generalized two-filter formula with Rao Blackwellisation steps for the forward and the backward filters.  This two-filter approach combines a forward filter with a backward information filter which are approximated numerically using SMC for the regime sequence and Kalman filtering techniques for the hidden linear states.
 
-More recently, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} introduced a Rao Blackwellised smoother based on the forward-backward decomposition of the FFBS algorithm with Rao Blackwellisation steps both in the forward and backward time directions. The update of the smoothing distribution of the regime given the observation shares some striking similarities with the Rauch-Tung-Striebel smoothing procedure, which is at the heart of the FFBS procedure. The Rao-Blackwellisation requires to update backward in time the smoothing distribution of the states given the regimes and the observations, which is achieved by using a \emph{à la Kalman} backward update.
+More recently, \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} introduced a Rao Blackwellised smoother based on the forward-backward decomposition of the FFBS algorithm with Rao Blackwellisation steps both in the forward and backward time directions. The update of the smoothing distribution of the regime given the observations shares some striking similarities with the Rauch-Tung-Striebel smoothing procedure, which is at the heart of the FFBS procedure. The Rao-Blackwellisation requires to update backward in time the smoothing distribution of the states given the regimes and the observations, which is achieved by using a \emph{à la Kalman} backward update.
 %The backward pass samples trajectories of indicator variables backward in time using the particles and weights of the forward pass.
 
-In this paper, we propose to improve the performance of the algorithms introduced in \cite{briers:doucet:maskell:2010} and in \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} by using additional Rao-Blackwellisation steps allowing the sample "new" particles in the backward pass. This approach may be seen as an extension of the ideas of \cite{fearnhead:clifford:2003} for Rao-Blackwellized smoother.  In \cite{briers:doucet:maskell:2010}, for all $1\le i\le n$, the sampled forward and backward sequences are merged to approximate the posterior distribution of $(a_i,z_i)$. We propose to approximate the marginal smoothing distribution of $(a_i,z_i)$ by merging the sampled forward and backward trajectories at times $i-1$ and $i+1$ and integrating out all possible paths between time $i-1$ and time $i$ and between time $i$ and time $i+1$ instead of sampling random variables. Similarly, in the backward pass of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}, a regime $\tilde{a}_i$ is sampled at time $1\le i\le n-1$ using the particles produced by the forward filter at time $i$. In this case, particle rejuvenation may be introduced by using the forward weighted samples at time $i-1$ and extending these trajectories at time $i$ with a Kalman filter for all possible values of the regime. Then, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$ using an appropriately adapted weight.
+In this paper, we propose to improve the performance of the algorithms introduced in \cite{briers:doucet:maskell:2010} and in \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013} by using additional Rao-Blackwellisation steps allowing to sample "new" particles in the backward pass. This approach may be seen as an extension of the ideas of \cite{fearnhead:clifford:2003} for Rao-Blackwellized smoothers.  In \cite{briers:doucet:maskell:2010}, for all $1\le i\le n$, the sampled forward and backward sequences are merged to approximate the posterior distribution of $(a_i,z_i)$. We propose to approximate the marginal smoothing distribution of $(a_i,z_i)$ by merging the sampled forward and backward trajectories at times $i-1$ and $i+1$ and integrating out all possible paths between time $i-1$ and time $i$ and between time $i$ and time $i+1$ instead of sampling random variables. Similarly, in the backward pass of \cite{lindsten:bunch:sarkka:schon:godsill:2015,sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013}, a regime $\tilde{a}_i$ is sampled at time $1\le i\le n-1$ using the particles produced by the forward filter at time $i$. In this case, particle rejuvenation may be introduced by using the forward weighted samples at time $i-1$ and extending these trajectories at time $i$ with a Kalman filter for all possible values of the regime. Then, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$ using an appropriately adapted weight.
 
-The paper is organized as follows. The proposed modification of the fully Rao Blackwellised Monte Carlo smoothers are presented in Section~\ref{sec:RaoBlackwell}. The performance of all these methods is illustrated in Section~\ref{sec:numerical:experiments} with simulated data. In Section~\ref{sec:crudeoil}, an application to commodity markets is presented; the performance of our procedure is illustrated on crude oil  data. A detailed derivation of the algorithms is provided in the Appendix.
+The paper is organized as follows. The proposed modification of the fully Rao Blackwellised Monte Carlo smoothers are presented in Section~\ref{sec:RaoBlackwell}. The performance of all these methods is illustrated in Section~\ref{sec:numerical:experiments} with simulated data. In Section~\ref{sec:crudeoil}, an application to commodity markets is presented; the performance of our procedure is illustrated with crude oil  data. A detailed derivation of the algorithms is provided in the Appendix.
 
 
 \section{Rao Blackwellised smoothing algorithms}
@@ -167,7 +145,7 @@ The conditional distribution of $Y_i$ given $a^k_{1:i-1}$, $a_i$ and $Y_{1:i-1}$
 \[
 \gamma_i^{j,k} \propto  Q(a_{i-1}^k,j)|B_jP^{j,k}_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^{j,k}_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^{j,k}_{i|i-1}}^2\right\} \eqsp,
 \]
-where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{j}P^k_{i-1}T'_{j} + \barH_{j}$. In \cite{chen:liu:2000}, for all $1\le k \le N$, an ancestral path is chosen with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$. Then, the new regime $a_i^k$ is sampled in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$. A drawback of this method is that only ancestral paths that have been selected using the importance weights $(\omega^k_{i-1})_{1\le k \le N}$ are extended at time $i$. Following \cite{barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths. Following \cite{fearnhead:clifford:2003,barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths. To obtain the weight associated with each offspring write the following approximation of  $p(a_{1:i}|y_{1:i})$ based on the weighted samples at time $i-1$:
+where  $\mu^{j,k}_{i|i-1} = d_{j} + T_{j}\mu^k_{i-1}$ and $P^{j,k}_{i|i-1} = T_{j}P^k_{i-1}T'_{j} + \barH_{j}$. In \cite{chen:liu:2000}, for all $1\le k \le N$, an ancestral path is chosen with probabilities proportional to  $(\omega^k_{i-1})_{1\le k \le N}$. Then, the new regime $a_i^k$ is sampled in  $\{1,\ldots, J\}$ with probabilities proportional to $(\gamma_i^{j,k})_{1\le j\le J}$. A drawback of this method is that only ancestral paths that have been selected using the importance weights $(\omega^k_{i-1})_{1\le k \le N}$ are extended at time $i$. Following \cite{barembruch:garivier:moulines:2008}, this may be improved by considering all the offsprings of all ancestral trajectories $\{a_{1:i-1}^k\}_{1\le k \le N}$. Each ancestral path has $J$ offsprings at time $i$, it is thus necessary to choose a given number of trajectories at time $i$ (for instance $N$) among the $NJ$ possible paths. To obtain the weight associated with each offspring write the following approximation of  $p(a_{1:i}|y_{1:i})$ based on the weighted samples at time $i-1$:
 \begin{align*}
 p^N(a_{1:i}|y_{1:i})&\propto \sum_{k=1}^N\omega^k_{i-1}Q(a^k_{i-1},a_i)p(y_i|a^k_{1:i-1},a_i,y_{1:i-1})\delta_{a^k_{1:i-1}}(a_{1:i-1})\eqsp,\\
 &\propto \sum_{k=1}^N\sum_{j=1}^J\omega^k_{i-1}\gamma_i^{j,k}\delta_{(a^k_{1:i-1},j)}(a_{1:i})\eqsp.
@@ -339,7 +317,7 @@ where the proportionality is with respect to $(a^k_{1:i-1},a_i)$ and
 \end{align*}
 where $P_{i|i-1}^k(a_i) = \Gamma_{i|i-1}^k(a_i)(\Gamma_{i|i-1}^k(a_i))'$. $p(a_{1:i}|a_{i+1:n},y_{1:n})$ is then approximated by :
 \[
-p^N(a_{1:i}|a_{i+1:n},y_{1:n})\propto\sum_{k=1}^N \omega_{i|i-1}^k(a_i)Q(a_i,a_{i+1})|\Lambda^k_{i|i-1}(a_{i:n})|^{-1/2}\exp\left\{\eta^k_{i|i-1}(a_{i:n})/2\right\}\delta_{a^k_{1:i-1}}(a_{1:i-1})
+p^N(a_{1:i}|a_{i+1:n},y_{1:n})\propto\sum_{k=1}^N \omega_{i|i-1}^k(a_i)Q(a_i,a_{i+1})|\Lambda^k_{i|i-1}(a_{i:n})|^{-1/2}\exp\left\{\eta^k_{i|i-1}(a_{i:n})/2\right\}\delta_{a^k_{1:i-1}}(a_{1:i-1}).
 \]
 By integrating over all possible paths $a_{1:i-1}$, $\tilde{a}_i$ is sampled in $\{1,\ldots,J\}$.
 \subsection{Rao Blackwellised Two-filter Smoother (RBTF)}
@@ -539,7 +517,7 @@ The proof is postponed to Appendix~\ref{sec:app:proofs}.
 
 \section{Simulated data}
 \label{sec:numerical:experiments}
-This section highlights the performance improvement brought by  the additional Rao-Blackwellisation steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where the number of states is $J=2$. In each setting the transition matrix $Q$ is such that the probability of switching from one regime to the other is small, as expected for the WTI crude oil data;  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
+This section highlights the improvements brought by  the additional Rao-Blackwellisation steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where the number of states is $J=2$. In each setting the transition matrix $Q$ is such that the probability of switching from one regime to the other is small, as expected for the WTI crude oil data;  see Section~\ref{sec:exp}. First, the FFBS algorithm is applied to a simple one-dimensional model with:
 \[
 \pi(1)=\pi(2) = 1/2\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= c_2 = 0 \eqsp,
 \]
@@ -549,21 +527,22 @@ Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T_1 = T_2 = 1\;\;\b
 \[
 B_1 = B_2 =1\;\;\barG_1 = 0.3\;\;\barG_2 = 0.1\eqsp.
 \]
-The two FFBS algorithms are used with $N = \tilde{N} = 50$ and the estimated posterior probabilities $\mathbb{P}(a_k=1|Y_{1:n})$ are compared to the estimation obtained with the proposed FFBS algorithm with rejuvenation and $2000$ particles. Figure~\ref{fig:ffbs:posterior} illustrates that the algorithm with rejuvenation slightly improves the original algorithm in this simple case.
-\begin{figure}
-\centering
-\includegraphics[scale=.3]{FFBSplot}
-\caption{Estimated posterior probabilities by the two FFBS algorithms.}
-\label{fig:ffbs:posterior}
-\end{figure}
-Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the difference between the the estimation obtained with the proposed FFBS algorithm with rejuvenation and $2000$ particles and the estimation given by the two FFBS algorithms with $N = \tilde{N} = 50$.
-\begin{figure}
-\centering
-\includegraphics[scale=.3]{err_est_ffbs}
-\caption{Posterior probabilities estimation error fo the two FFBS algorithms.}
-\label{fig:ffbs:err}
-\end{figure}
-%In addition, Table~\ref{fig:ffbs:RMSE} displays the RMSE for the estimation of the regimes as a function of time with $100$ independent batches of data and shows that the additional rejuvenation step improves the performance of the algorithm (at time $i$, the estimated label is set to $1$ if the estimation of $\mathbb{P}(a_i|Y_{1:n})$ is greater than $0.5$ and to $2$ otherwise).
+The two FFBS algorithms are used with $N = \tilde{N} = 50$ and the estimated posterior probabilities $\mathbb{P}(a_k=1|Y_{1:n})$ are compared to the estimation obtained with the proposed FFBS algorithm with rejuvenation and $2000$ particles. Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the difference between the the estimation obtained with the proposed FFBS algorithm with rejuvenation and $2000$ particles and the estimation given by the two FFBS algorithms with $N = \tilde{N} = 50$.
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.3]{err_est_ffbs}
+%\caption{Posterior probabilities estimation error for the two FFBS algorithms.}
+%\label{fig:ffbs:err}
+%\end{figure}
+%In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the estimation for the two algorithms to illustrate that both estimators have similar variability. 
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.3]{var}
+%\caption{Empirical variances of the estimation for the two FFBS algorithms.}
+%\label{fig:ffbs:var}
+%\end{figure}
+
+
 
 Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
 \paragraph{Experiment 1:}
@@ -580,53 +559,28 @@ The approximations of the smoothing distributions are computed with $N=10$. RBTF
 %Figure~\ref{fig:exp1:label} display the estimated posterior distributions of the labels given by the two algorithms at different time instances.
 
 \paragraph{Experiment 2:}
-In this second experiment, we use the same parameters except that we increase by a factor $10$ the values in $\barG$.
-%and $B$ becomes:
-%\[
-%B = \begin{pmatrix}1 & 0 & 0.5 & 0 \\ 0 & 1 & 0.5 & 0\end{pmatrix}\eqsp.
-%\]
-%It becomes a situation more difficult because of the noisy level.
-The smoothing distributions are estimated with $N=15$ particles. Both methods are compared to the approximations provided by RBTF with $1000$ particles.
-%Figure~\ref{fig:exp2:label} display the estimated posterior distributions of the labels given by the two algorithms at different time instances.
- %Figure~\ref{fig:exp1:label} and %\ref{fig:exp2:label} display the estimated posterior distributions of the labels given by the two algorithms at different time instances.
-
-\medskip
-
-%Figure~\ref{fig:exp:artificial} displays the estimated posterior distributions of the labels $(a_k)_{1\le k\le 500}$ given by RBTF for the first $500$ time steps with the  artificial distributions:
-
-%In experiment~1, the three artificial laws behave similarly except that the first choice is unable to detect the last regime switching for more than 50 time steps.
-%In experiment 2, the second method is completely unstable which indicates that the third artificial leads to the best performance. Therefore, the third artificial law is used in the following numerical experiments.
-
-%\begin{figure}
-%\centering
-%\includegraphics[scale=.5]{Artificial_Compare_Exp1_1_500.eps}
-%\includegraphics[scale=.5]{Artificial_Compare_Exp2_1_500.eps}
-%\caption{estimated probabilities by RBTF in experiment 1 [top] and experiment 2 [bottom] with the two artificial laws: yellow (the first one) and red (the third one).}
-%\label{fig:exp:artificial}
-%\end{figure}
-The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the regimes given by the algorithms using:
+In this second experiment, we use the same parameters except that we increase by a factor $10$ the values in $\barG$. The smoothing distributions are estimated with $N=15$ particles. Both methods are compared to the approximations provided by RBTF with $1000$ particles. The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the regimes given by the algorithms using:
 \[
 \gamma^{}_i (a_i, z_i) = \sum_{k=1}^{N} Q(a^{k}_{i-1},a_i) \omega^{k}_{i-1} \exp\left\{ -\frac{1}{2} \log \left|\barH_{a^k_{i-1}} \right| -\frac{1}{2}\normMat{\barH_{a^k_{i-1}}}{z_i - d_{a^k_{i-1}} -T \mu^k_{i-1} }^2\right\} \eqsp.
 \]
 In both cases, RBTF behaves slightly better than \cite{briers:doucet:maskell:2010} which does not detect some regime switchings (for instance  at time 780 in Figure~\ref{fig:exp1:label} and at time 300 in Figure~\ref{fig:exp2:label}) or gives false detections (for instance at time 10 in Figure~\ref{fig:exp2:label}).
-
-\begin{figure}
-\centering
-\includegraphics[scale=.5]{N10_1_500}
-\includegraphics[scale=.5]{N10_501_1000}
-\includegraphics[scale=.5]{N10_1001_1500}
-\caption{Experiment 1 - estimated probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=10$ particles,  RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
-\label{fig:exp1:label}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=.5]{N15_1_500}
-\includegraphics[scale=.5]{N15_501_1000}
-\includegraphics[scale=.5]{N15_1001_1500}
-\caption{Experiment 2 - estimated smoothing probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
-\label{fig:exp2:label}
-\end{figure}
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.5]{N10_1_500}
+%\includegraphics[scale=.5]{N10_501_1000}
+%\includegraphics[scale=.5]{N10_1001_1500}
+%\caption{Experiment 1 - estimated probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=10$ particles,  RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
+%\label{fig:exp1:label}
+%\end{figure}
+%
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.5]{N15_1_500}
+%\includegraphics[scale=.5]{N15_501_1000}
+%\includegraphics[scale=.5]{N15_1001_1500}
+%\caption{Experiment 2 - estimated smoothing probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
+%\label{fig:exp2:label}
+%\end{figure}
 
 \section{Application to CME crude oil (WTI)}
 \label{sec:crudeoil}
@@ -645,13 +599,7 @@ where the parameter $\left(r, \sigma, \kappa, \alpha, \eta, \rho \right)$ are co
 \end{align*}
 where $(a_t)_{t\ge 0}$ is a finite state space Markov process.
 
-%Statistical estimation is performed using market observations and cannot be done directly under the risk-neutral probability but under the historical probability $\mathbb{P}$. It is assumed that each factor (spot, convenience yield) has its own constant market price of risk, $\lambda^S$ for $S_t$ and $\lambda^{\delta}$ for $\delta_t$. The historical dynamics of the Gibson-Schwartz model is then described as follows:
-%\begin{align*}
-%\rmd S_{t} & = (\mu -\delta_{t})S_{t}\rmd t+\sigma_{a_t} S_{t} \rmd \widetilde{W}_{t}^{1} \eqsp,\\
-%\rmd \delta_{t} & = \kappa_{a_t}(\widetilde{\alpha}_{a_t}-\delta_{t})\rmd t+\eta_{a_t} \rmd \widetilde{W}_{t}^{2} \eqsp, \quad \rmd \langle \widetilde{W}_t^1, \widetilde{W}_t^2\rangle = \rho \rmd t\eqsp,
-%\end{align*}
-%where $( (\widetilde{W}_t^1,\widetilde{W}_t^2), t \geq 0)$ are standard Brownian motions under the historical probability $\mathbb{P}$ with  correlation $\rho_{a_t}$, $\mu = r - \lambda^S$ and $\widetilde{\alpha}_{a_t} = \alpha_{a_t} - \lambda^{\delta}/\kappa_{a_t} $. 
-This model allows to exhibit fundamental features of commodity future prices, which typically display different regimes of volatility and/or convenience yield. A two-regime model is already sufficient to produce stylized effects such as contango (increase of future prices) and backwardation (decrease of future prices).  Assuming that the switching rate between regimes is negligible compared to the inverse of the discretization period, the discretized version of the spot price and convenience yield $Z_i= (\ln S_i, \delta_i)$ (the sampling period is taken to be 1) is modeled as a Conditionally Linear Gaussian Model. The explicit integration of this SDE detailed in Lemma~\ref{lem:integratedSDE} yields the following discrete time model for $(Z_i)_{i\ge 0}$:
+This model allows to exhibit fundamental features of commodity future prices, which typically display different regimes of volatility and/or convenience yield. A two-regime model is already sufficient to produce stylized effects such as contango (increase of future prices) and backwardation (decrease of future prices).  Assuming that the switching rate between regimes is negligible compared to the inverse of the discretization period, the discretized version of the spot price and convenience yield $Z_i= (\ln S_i, \delta_i)$ (the sampling period is taken to be 1) is modeled as a CLGM. The explicit integration of this SDE detailed in Lemma~\ref{lem:integratedSDE} yields the following discrete time model for $(Z_i)_{i\ge 0}$:
 \[
 Z_i = d_{a_{i-1}} + T Z_{i-1} + H_{a_{i-1}} \varepsilon_i\eqsp,
 \]
@@ -727,7 +675,7 @@ G = \mathrm{diag}(g_1, \dots , g_{d} )\eqsp.
 \]
 The model depends of the parameters:
 \[
-\theta \eqdef \{\pi, Q, \mu_1, \Sigma_1, \kappa, (\alpha_j)_{1\leq j\leq J}, (\sigma_j)_{1\leq j\leq J}, (\eta_j)_{1\leq j\leq J}, (\rho_j)_{1\leq j\leq J}, \mu, (\lambda_j)_{1\leq j\leq J}, (g_{\ell})_{1\leq \ell\leq d} \}\eqsp .
+\theta \eqdef \{\pi, Q, \mu_1, \Sigma_1, \kappa, (\alpha_j)_{1\leq j\leq J}, (\sigma_j)_{1\leq j\leq J}, (\eta_j)_{1\leq j\leq J}, (\rho_j)_{1\leq j\leq J}, (g_{\ell})_{1\leq \ell\leq d} \}\eqsp .
 \]
 The aim of this section is to estimate $\theta$ and the posterior probabilities $\mathbb{P}(a_k=j|Y_{1:n})$, $1\le k \le n$, $1\le j \le J$. Given the observations $Y_{1:n}$, the EM algorithm introduced in \cite{dempster:laird:rubin:1977} maximizes the incomplete data log-likelihood $\theta\mapsto \ell_{\theta}^{n}$ defined by
 \begin{equation*}
@@ -814,10 +762,10 @@ As the function $\theta\mapsto Q^N(\theta,\theta_p)$ cannot be maximized analyti
 The initial transition probability in CMA-ES is chosen as $Q(1,1) = 0.98, \; Q(2,2) = 0.97$ and $\pi(1) = \pi(2) = 0.5$ where the number $1$ represents the backwardation regime and $2$ represents the contango regime. The other parameters are initialized as shown in the following table:
 \begin{figure}[h!]
 	\centering
-	\begin{tabular}{||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c||}
-		$\kappa$ & $\alpha_1$ & $\alpha_2$ & $\sigma_1$ & $\sigma_2$ & $\eta_1$ & $\eta_2$ & $\rho_1$ & $\rho_2$ & $\mu$ & $\lambda_1$ & $\lambda_2$ & $g_1$ & $g_2$ & $g_3$ & $g_4$ \\
+	\begin{tabular}{||c|c|c|c|c|c|c|c|c|c|c|c|c||}
+		$\kappa$ & $\alpha_1$ & $\alpha_2$ & $\sigma_1$ & $\sigma_2$ & $\eta_1$ & $\eta_2$ & $\rho_1$ & $\rho_2$ & $g_1$ & $g_2$ & $g_3$ & $g_4$ \\
 		\hline
-		5.0 & 0.1 & -0.05 & 0.4 & 0.4 & 0.5 & 0.5 & 0.75 & 0.65 & 0.0 & 0.0 & 0.0 & 0.1 & 0.1 & 0.1 & 0.1
+		5.0 & 0.1 & -0.05 & 0.4 & 0.4 & 0.5 & 0.5 & 0.75 & 0.65 & 0.1 & 0.1 & 0.1 & 0.1
 	\end{tabular}
 	\caption{Initial values for the EM algorithm.}
 \end{figure}\\
@@ -837,20 +785,26 @@ The CMA-ES algorithm is used with an initial standard deviation for the paramete
 In Gibson-Schwartz model \cite{gibson:schwartz:1990}, a stronger backwardation effect implies a greater value for $\alpha$ for the same values of the other parameters. For the CME WTI Crude Oil, backwardation effect is more frequent than contango effect so that $\alpha_1$ should be greater than $\alpha_2$. Therefore, this condition is imposed for all simulations in the CMA-ES algorithm. The results after $2500$ iterations of the EM algorithm are given in Figure~\ref{fig:CMEfinalestimates}.
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{||c|c|c|c|c|c|c|c|c|c|c||c|clc|c|c||}
-		Parameter&$\kappa$ & $\alpha_1$ & $\alpha_2$ & $\sigma_1$ & $\sigma_2$ & $\eta_1$ & $\eta_2$ & $\rho_1$ & $\rho_2$  \\
+	\begin{tabular}{||c|c|c|c|c|c|c|c|c||c|clc|c|c||}
+	\hline
+		Parameter&  $\kappa$ & $\sigma_1$ & $\sigma_2$ & $\eta_1$ & $\eta_2$ & $\rho_1$ & $\rho_2$  \\
 		\hline
-		Value&2.6378 & 0.0889 & -0.0281 & 0.3733 & 0.3485 & 0.5892 & 0.3814 & 0.8709 & 0.6761   \\
+		Value & 2.6378 &0.3733 & 0.3485 & 0.5892 & 0.3814 & 0.8709 & 0.6761   \\
 		\hline
-		Std. Dev& 0.1999 & 0.004248 & 0.00149 & 0.005438 & 0.002884 & 0.0483 & 0.0349 & 0.0064 & 0.0052   \\
+		Std. Dev & 0.1999 & 0.005438 & 0.002884 & 0.0483 & 0.0349 & 0.0064 & 0.0052 \\  
+		\hline
 	\end{tabular}
-	\vspace{1.cm}
-	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|||}
-		Parameter&$\mu$ & $\lambda_1$ & $\lambda_2$ & $g_1$ & $g_2$ & $g_3$ & $g_4$  & $Q(1,1)$ & $Q(2,2)$\\
+	
+	\vspace{.2cm}
+	
+	\begin{tabular}{||c|c|c|c|c|c|c|c|c|c|c|||}
+	\hline
+		Parameter & $\alpha_1$ & $\alpha_2$  & $g_1$ & $g_2$ & $g_3$ & $g_4$  & $Q(1,1)$ & $Q(2,2)$\\
 		\hline
-		Value&0.1712 & 0.2422	& -0.1731 & 2.3e-2 & 1.0e-4 & 3.0e-4 & 2.3e-2 & 0.9917 & 0.9880 \\
+		Value & 0.0889 & -0.0281  & 2.3e-2 & 1.0e-4 & 3.0e-4 & 2.3e-2 & 0.9917 & 0.9880 \\
 		\hline
-		Std. Dev& 0.004147 & 0.03243 & 0.01973 & 1.9e-4 & 2.6e-4 & 2.3e-4 & 2.1e-04 &  6.7e-4 & 9.6e-4
+		Std. Dev & 0.004248 & 0.00149 & 1.9e-4 & 2.6e-4 & 2.3e-4 & 2.1e-04 &  6.7e-4 & 9.6e-4\\
+		\hline
 	\end{tabular}
 	\caption{Final estimates after 3500 iterations.}
 	\label{fig:CMEfinalestimates}
@@ -863,18 +817,13 @@ As expected, we obtain $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$, $\eta
 %Interestingly, we see that $\lambda^{\delta}_1 \geq \lambda^{\delta}_2$ \footnote{\cite{almansour:2016} obtain the same result in the opposite order, because of their definition of the historical mean-reverting value} and the two historical mean-reverting values are $\widetilde{\alpha}_1 = 0.0073$ and $\widetilde{\alpha}_2 = 0.0305$. This underlines that,
 
 Figure~\ref{fig:LogPriceTermStructure:data} compares the evolution of future $1M$ (the nearest contracts) to the \emph{term structure} observed from CME WTI crude oil, defined as the difference of future $13M$ and future $1M$ (to avoid seasonality). The figure shows that it is not necessary to have an inverse relationship between the  price of the nearest contract and the term structure. But when a significant drop in the price  of the nearest contract occurs, the term structure increases (i.e. in contango).
-\begin{figure}
-\centering
-\includegraphics[scale=.6,angle=90]{LogPrice_TermStructure}
-\caption{Log-price (red line) and slope of future curves (blue line)}
-\label{fig:LogPriceTermStructure:data}
-\end{figure}
-%The first regime (in backwardation) is identified by a higher mean-reversion of convenience yield $\alpha$ and a higher volatility in states variables ($\sigma$ and $\eta$).
-%And vice versa the second regime is characterized by a lower value of $\alpha, \sigma, \eta$.
-%\begin{verbatim}
-%TODO: Add reference: Explain why $rho$ must be high (at least positive).
-%TODO: Explain why the noises $g1$, $g4$ are greater than the intermediate contracts
-%\end{verbatim}
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.6,angle=90]{LogPrice_TermStructure}
+%\caption{Log-price (red line) and slope of future curves (blue line)}
+%\label{fig:LogPriceTermStructure:data}
+%\end{figure}
+
 
 
 The correlation between the spot price and the convenience yield is positive and high in both two regimes. This is an accordance to what as been observed in most commodity market; see \cite{gibson:schwartz:1990}.  The slope of future curve decreases in function of maturity. 
@@ -882,66 +831,27 @@ The correlation between the spot price and the convenience yield is positive and
 Figure~\ref{fig:posterior:data} and~\ref{fig:posterior:data:logprice} displays the the estimated posterior probabilities of the regimes and the observed future slope. When the future curve is in backwardation (resp. contango), the model is expected to be in the first regime (resp. second regime), except for the period where the slope of the future curve is too small and in the period from December $2008$ to April $2009$ (beginning of the crisis).
 
 
-%After convergence, the value obtained for $\kappa$ is slightly greater than the one obtained in \cite{almansour:2014} but we also obtain slightly lower values for $\eta_1$ and $\eta_2$. The result also shows that the future price of maturity $4W$ is such that $g_4$ is greater than all the other $g_i$'s. It may be explained by the fact that there is no observation of spot contract which is likely to impact mostly the front future contract.
-
-
 %\begin{figure}
-%\centering
-%\includegraphics[scale=.38]{alpha_M.png}\\
-%\includegraphics[scale=.38]{sigma_M.png}\\
-%\includegraphics[scale=.38]{eta_M.png}
-%\caption{Estimation of $\alpha$, $\sigma$ and $\eta$.}
-%\end{figure}
-
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=.75,angle=90]{Posterior_Data}
-	\caption{Posterior probability (triangle black) and slope of future curves (blue line)}
-	\label{fig:posterior:data}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=.75]{Posterior_Data_LogPrice}
-	\caption{Posterior probability (triangle black) and slope of future curves (blue line)}
-	\label{fig:posterior:data:logprice}
-\end{figure}
-
-
-
-%\paragraph{Comparaison of estimated future prices with the observations}
-%It is interesting to assess the accuracy of the estimated parameters obtained with the EM algorithm. These estimated parameters are used to estimate the future prices and compare them with the observed ones for each maturity. The results of this estimation procedure is displayed in Figure~\ref{fig:density:4W3M} and Figure~\ref{fig:density:6M1Y}.
-
-%\begin{figure*}[htb]
 %	\centering
-%		\begin{tabular}{||c|c|c|c|c||}
-%		Residuals & $F_{4W}$ & $F_{3M}$ & $F_{6M}$ & $F_{1Y}$\\
-%		\hline
-%		mean & -0.002654812 & 0.001178231 & 0.002130222 & 0.002391526 \\
-%		std & 0.01461169 & 0.00575261 & 0.01039791 & 0.01796323
-%		\end{tabular}
-%	\caption{Table of differences between estimated and observed future prices.}
-%	\label{tab:tableTest}
-%\end{figure*}
-%Mean value of the residuals between the estimated and observed log-future prices are close to $0$ with a small variance. The standard deviation of futures $4W$ has an important value in comparison to futures $3M$ or $6M$ which goes along with the remark for the estimation of $G$ in the equation \eqref{eq:model:obs} by the EM algorithm.
-
-%\FloatBarrier
-
-%Our algorithm is calibrated using future prices of maturities $4W, 3M, 6M$ and $1Y$ but may be used to estimate future prices of maturities $8W, 9M, 2Y, 3Y$. These estimations may be compared to the observations given in the market. Densities of the estimated prices for these others maturities $8W, 9M, 2Y, 3Y$ are shown in Figure~\ref{fig:densothers}.
-%\begin{figure}
-%\centering
-%\includegraphics[scale=.4]{Density_Estim_Obs_OUTSIDE.png}
-%\caption{Densities of estimated and observed log-future prices $8W, 9M, 2Y, 3Y$.}
-%\label{fig:densothers}
+%	\includegraphics[scale=.75,angle=90]{Posterior_Data}
+%	\caption{Posterior probability (triangle black) and slope of future curves (blue line)}
+%	\label{fig:posterior:data}
 %\end{figure}
-%At first glance, mean values and standard deviations of the difference between observed and estimated future prices are greater than in the previous case since these maturities are not used to calibrate the model. Nevertheless, these errors remain close to $0$. In addition, standard deviations of futures $2Y$ and $3Y$ are greater than the ones of $8W$ and $9M$, it is reasonable since $2Y$ and $3Y$ futures are outside of the interval of maturities used to calibrate the model.
-%\FloatBarrier
+%
+%\begin{figure}
+%	\centering
+%	\includegraphics[scale=.75]{Posterior_Data_LogPrice}
+%	\caption{Posterior probability (triangle black) and slope of future curves (blue line)}
+%	\label{fig:posterior:data:logprice}
+%\end{figure}
 
+
+\section{Conclusions}
+In this paper, we proposed a survey of Rao Blackwellised Sequential Monte Carlo methods to approximate smoothing distributions in conditionally linear and Gaussian state spaces. These methods combine particle based approximations to sample the sequence of hidden regimes while the hidden linear states are explicitly integrated conditional on the sequence of regimes and observations. They  are based on the forward backward decomposition of the smoothing distributions using either two-filter based algorithms or forward filtering backward smoothing techniques mimicking the Rauch-Tung-Striebel smoother. The paper presents these algorithms in a common unifying framework and also provides a survey of different techniques that could be used in the forward filtering pass which may improve significantly the usual mixture Kalman filter. The filtering distributions are approximated at  each time step by considering all possible offsprings of all ancestral trajectories before discarding degenerated paths instead of resampling the ancestral paths before propagating them at the next time step. We also investigated the benefit of additional Rao Blackwellisation steps which allow to sample new regimes at each time step conditional on the forward and backward particles. This rejuvenation step uses explicit integration of the hidden linear states before merging the forward and backward filters for two-filter based algorithms or before sampling new states backward in time for FFBS based methods.  The paper displays some Monte Carlo experiments with simulated data to illustrate that this additional rejuvenation step improves the performance of the smoothing algorithms with no additional computational costs or variance. They are also applied to commodity markets using WTI crude oil data.
 
 \appendix
 
-\section{Technical lemmas}%~\ref{eq:technical:twofilter}-\ref{lem:integral:gammap}
+\section{Technical lemmas}
 \begin{lemma}
 \label{lem:integratedSDE}
 Let $(X_t,\delta_t)_{t\ge0}$ be solutions to the following SDE:
@@ -1059,139 +969,6 @@ The proof is completed noting that
 = \exp\left\{\frac{\dimz}{2}\log(2\pi) + \frac{1}{2}\log|\tilde{\Omega}_{i}(a_{i:n})| +\frac{1}{2}\left[\Sigma_i^{-1}\mu_i+\nu_{i}(a_{i:n})\right]'\tilde{\Omega}_{i}(a_{i:n})\left[\Sigma_i^{-1}\mu_i+\nu_{i}(a_{i:n})\right]\right\}\eqsp.
 \end{multline*}
 \end{proof}
-
-%\clearpage
-%\newpage
-%
-%\section{Algorithms}
-%The forward filter is described in Algorithm~\ref{algo:forward}. The conditional distribution of $Y_i$ given $a^k_{1:i-1}$, $a_i$ and $Y_{1:i-1}$ is a Gaussian distribution with mean $c_{a_i}+B_{a_i}\mu^k_{i|i-1}$ and variance $B_{a_i}P^k_{i|i-1}B'_{a_i} + \barG_{a_i}$ which means that $\gamma_i^j$ may be written:
-%\begin{align*}
-%\gamma_i^j &= p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) Q(a_{i-1}^k,j) \eqsp, \\
-%& =  Q(a_{i-1}^k,j)|B_jP^k_{i|i-1}B'_j + \barG_j|^{-1/2}\exp\left\{-\frac{1}{2}\normMat{B_jP^k_{i|i-1}B'_j + \barG_j}{y_i-c_{j}-B_j\mu^k_{i|i-1}}^2\right\} \eqsp.
-%\end{align*}
-%\begin{algorithm}
-%\DontPrintSemicolon
-%\KwIn{Initial distribution $\pi$ on $\{1,\ldots,J\}$, initial mean $\mu_1$ and variance $\Sigma_1$.}
-%\KwOut{A set of trajectories $(a^k_{1:i})_{1\le k\le N}$, means $(\mu^k_{i})_{1\le k\le N}$ and variances $(P^k_{i})_{1\le k\le N}$ with importance weights $(\omega^k_i)_{1\le k\le N}$, $1\le i \le n$.}
-%{\bf Initialization}\;
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%Sample $a^k_1 \in \{1,\ldots,J\}$ such that $\mathbb{P}\left(a_1^k = j\right) = \pi_j$. \;
-%Compute $\mu_1^k$ and $P_1^k$:
-%\begin{align*}
-%K^k_{1} &=\Sigma_1B'_{a_1^k}\left(B_{a_1^k}\Sigma_1B'_{a_1^k} + \barG_{a_1^k}\right)^{-1}\eqsp,\\
-%\mu^k_{1} &= \mu_{1} + K^k_1\left(Y_1 - c_{a_{1}^k} - B_{a_1^k}\mu_{1}\right)\eqsp,\\
-%P^k_{1} &=\left(I-K^k_{1}B_{a_1^k}\right)\Sigma_1\eqsp.
-%\end{align*}
-%Update the importance weight: $\omega^k_1 \propto p(y_1|a_1^k)$.
-%}
-%{\bf Iterations}\;
-%\For{$i \gets 2$ \textbf{to} $n$} {
-%Resample the set $(\{a^k_{1:i-1}, \mu^k_{i-1}, P^k_{i-1}\})_{1\le k\le N}$ using the normalized weights $(\omega^k_{i-1})_{1\le k \le N}$.\;
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%For all $j \in \{1,\ldots, J\}$ compute
-%\[
-%\gamma_i^{j,k} = p(y_i | a_i = j, a_{1:i-1}^k, y_{1:i-1}) q(a_{i-1}^k,j)\eqsp.
-%\]
-%Sample $a_i^k \in \{1,\ldots, J\}$ using the normalized weights $(\gamma_i^{j,k})_{1\le j\le J}$.\;
-%Update $\mu_i^k$ and $P_i^k$:
-%\begin{align*}
-%\mu^{k}_{i|i-1} &= d_{a_{i}^k} + T_{a_{i}^k}\mu^k_{i-1}\eqsp,\\
-%P^k_{i|i-1} &= T_{a_{i}^k}P^k_{i-1}T'_{a_{i}^k} + \barH_{a_{i}^k}\eqsp,\\
-%K^k_{i} &=P^k_{i|i-1}B'_{a_{i}^k}\left(B_{a_{i}^k}P^k_{i|i-1}B'_{a_{i}^k} + \barG_{a_{i}^k}\right)^{-1}\eqsp,\\
-%\mu^k_{i} &= \mu^{k}_{i|i-1} + K^k_i\left(Y_i - c_{a_{i}^k} - B_{a_{i}^k}\mu^{k}_{i|i-1}\right)\eqsp,\\
-%P^k_{i} &=\left(I-K^k_{i}B_{a_{i}^k}\right)P^k_{i|i-1}\eqsp.
-%\end{align*}
-%Update the importance weights: $\omega_i^k \propto \sum_{j=1}^J \gamma_i^{j,k}$.
-%}
-%}
-%\caption{Forward filter, see \cite{chen:liu:2000}}
-%\label{algo:forward}
-%\end{algorithm}
-%
-%\begin{algorithm}
-%\DontPrintSemicolon
-%\KwIn{Output of a forward filter: trajectories $(a^k_{1:i})_{1\le k\le N}$, means $(\mu^k_{i})_{1\le k\le N}$ and variances $(P^k_{i})_{1\le k\le N}$ with importance weights $(\omega^k_i)_{1\le k\le N}$, $1\le i \le n$, .}
-%\KwOut{Trajectory $\tilde{a}_{1:n}$ approximatively distributed according to $p(a_{1:n}|y_{1:n})$.}
-%{\bf Initialization}\;
-%Set $\tilde{a}_n = a_n^k$ with probability $\omega_n^k$.\\
-%{\bf Iterations}\;
-%\For{$i \gets n-1$ \textbf{to} $1$} {
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%Compute
-%\[
-%\omega^k_{i|n} \propto \omega_i^kQ(a_i^k,\tilde{a}_{i+1})\eqsp.
-%\]
-%}
-%Set $\tilde{a}_i = a_i^k$ with probability $\omega_{i|n}^k$.
-%}
-%\caption{Smoothing algorithm based on the approximation of \cite{kim:1994}}
-%\label{algo:kim}
-%\end{algorithm}
-%
-%
-%\begin{algorithm}
-%\DontPrintSemicolon
-%\KwIn{Output of a forward filter: trajectories $(a^k_{1:i})_{1\le k\le N}$, means $(\mu^k_{i})_{1\le k\le N}$ and variances $(P^k_{i})_{1\le k\le N}$ with importance weights $(\omega^k_i)_{1\le k\le N}$, $1\le i \le n$, .}
-%\KwOut{Trajectory $\tilde{a}_{1:n}$ approximatively distributed according to $p(a_{1:n}|y_{1:n})$.}
-%{\bf Initialization}\;
-%Set $\tilde{a}_n = a_n^k$ with probability $\omega_n^k$.\\
-%Compute $\hat{\Omega}_n$ and $\hat{\lambda}_n$:
-%\[
-%\hat{\Omega}_n = B'_{\tilde{a}_n}\barG^{-1}_{\tilde{a}_n}B_{\tilde{a}_n}\quad\mbox{and}\quad \hat{\lambda}_n =B'_{\tilde{a}_n}\barG^{-1}_{\tilde{a}_n}(y_n-c_{\tilde{a}_n})\eqsp.
-%\]
-%{\bf Iterations}\;
-%\For{$i \gets n-1$ \textbf{to} $1$} {
-%Compute
-%\[
-%m_{i+1} = \hat{\lambda}_{i+1} - \hat{\Omega}_{i+1}d_{\tilde{a}_{i+1}}\quad\mbox{and}\quad M_{i+1} = H_{\tilde{a}_{i+1}}'\hat{\Omega}_{i+1}H_{\tilde{a}_{i+1}} + I\eqsp.
-%\]
-%Set
-%\begin{align*}
-%\Omega_i &= T'_{\tilde{a}_{i+1}}(I-\hat{\Omega}_{i+1}H_{\tilde{a}_{i+1}}M^{-1}_{i+1}H'_{\tilde{a}_{i+1}})\hat{\Omega}_{i+1}T_{\tilde{a}_{i+1}}\eqsp,\\
-%\lambda_i &=T'_{\tilde{a}_{i+1}}(I-\hat{\Omega}_{i+1}H_{\tilde{a}_{i+1}}M^{-1}_{i+1}H'_{\tilde{a}_{i+1}})m_{i+1}\eqsp.
-%\end{align*}
-%\For{$k \gets 1$ \textbf{to} $N$} {
-%Compute
-%\[
-%\Lambda^k_i = (\Gamma_i^k)'\Omega_i\Gamma_i^k + I \quad\mbox{and}\quad \eta^k_i = \|\mu_i^k\|^2_{\Omega^{-1}_i} - 2\lambda'_i\mu_i^k-\|(\Gamma_i^k)'(\lambda_i-\Omega_i\mu_i^k)\|^2_{\Lambda_i}\eqsp.
-%\]
-%Set
-%\[
-%\tilde{\omega}_{i|n}^k \propto \omega_i^kQ(a_i^k,\tilde{a}_{i+1})|\Lambda^k_i|^{-1/2}\exp\left\{\eta^k_i/2\right\}\eqsp.
-%\]
-%}
-%Set $\tilde{a}_i = a_i^k$ with probability $\omega_{i|n}^k$ and
-%\[
-%\hat{\Omega}_i =  \Omega_i + B'_{\tilde{a}_i}\barG^{-1}_{\tilde{a}_i}B_{\tilde{a}_i} \quad\mbox{and}\quad \hat{\lambda}_i = \lambda_i + B'_{\tilde{a}_i}\barG^{-1}_{\tilde{a}_i}(y_i-c_{\tilde{a}_i})\eqsp.
-%\]
-%}
-%\caption{FFBS based algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015}}
-%\label{algo:FFBS}
-%\end{algorithm}
-%
-%
-%\begin{algorithm}[b]
-%\DontPrintSemicolon
-%\KwIn{Artificial densities $(\gamma^{}_i)_{1\le i\le n}$ and proposal densities $(\tilde{q}_i)_{1\le i \le n}$.}
-%\KwOut{A set of weighted trajectories $(\tilde{a}^j_{i:n})_{1\le j\le N}$ with importance weights $(\tilde{\omega}^j_i)_{1\le j\le N}$, $1\le i \le n$.}
-%{\bf Initialization}\;
-%For $1\le \ell \le N$, sample $\tilde{a}^{\ell}_n\sim\tilde{q}_n(\cdot)$.\;
-%For $1\le \ell \le N$, set:
-%\[
-%\tilde{\omega}^{\ell}_n \propto \frac{\int\gamma^{}_n(\tilde{a}^{\ell}_n,z')g_{}(\tilde{a}^{\ell}_n,z';y_n)\rmd z'}{\tilde{q}_n(\tilde{a}^{\ell}_n)}\eqsp.
-%\]
-%{\bf Iterations}\;
-%\For{$i \gets n-1$ \textbf{to} $1$} {
-%Resample the set $(\tilde{a}^{\ell}_{i+1:n})_{1\le j\le N}$ using the normalized weights $(\tilde{\omega}^{\ell}_{i+1})_{1\le j \le N}$.\;
-%For $1\le \ell \le N$, sample $\tilde{a}^{\ell}_{i}\sim\tilde{q}_i(\tilde{a}^{\ell}_{i+1:n},\cdot)$.\;
-%For $1\le \ell \le N$, set:
-%\[
-%\tilde{\omega}^{\ell}_i \propto \frac{q(\tilde{a}^{\ell}_i,\tilde{a}^{\ell}_{i+1})\int \gamma^{}_i(\tilde{a}^{\ell}_i,z')p_{}(y_{i:n}|\tilde{a}^{\ell}_{i:n},z')\rmd z'}{\tilde{q}_i(\tilde{a}^{\ell}_{i+1:n},\tilde{a}^{\ell}_i)\int \gamma^{}_{i+1}(\tilde{a}^{\ell}_{i+1},z')p_{}(y_{i+1:n}|\tilde{a}^{\ell}_{i+1:n},z')\rmd z'}\eqsp.
-%\]
-%}
-%\caption{Backward information filter, see \cite[Section~4.1.1]{briers:doucet:maskell:2010}}
-%\label{algo:backward}
-%\end{algorithm}
 
 \bibliographystyle{alpha}
 
