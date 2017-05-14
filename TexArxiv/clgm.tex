@@ -445,67 +445,67 @@ In the numerical experiments, $\gamma^{}_i(a_i,z_i)$ is set as a mixture of Gaus
 \label{sec:numerical:experiments}
 This section highlights the improvements brought by  the additional Rao-Blackwellization steps for the two-filter and the FFBS approximations of the marginal smoothing distributions in the case where the number of states is $J=2$. In each setting the transition matrix $Q$ is such that the probability of switching from one regime to the other is small, as expected for the WTI crude oil data, see Section~\ref{sec:exp}. First, the algorithms are applied to a simple one-dimensional model with:
 \[
-\pi_1=\pi_2 = 1/2\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= c_2 = 0 \eqsp,
+\pi_1=\pi_2 = 0.5\\;\;d_1 = 0.5\;\; d_2 = 0;\;c_1= 0.1\;\; c_2 = 0 \eqsp,
 \]
 \[
-Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T_1 = T_2 = 1\;\;\barH_1 = \barH_2= 0.05\eqsp,
+Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T_1 = T_2 = 1\;\;\barH_1 = \barH_2= 0.1\eqsp,
 \]
 \[
 B_1 = B_2 =1\;\;\barG_1 = 0.3\;\;\barG_2 = 0.1\eqsp.
 \]
-The original FFBS algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015} and the FFBS algorithm with rejuvenation proposed in this paper are used with $N = \tilde{N} = 50$ and the estimated posterior probabilities $\mathbb{P}(a_k=1|Y_{1:n})$ are compared to the estimation obtained with the proposed FFBS algorithm with rejuvenation and $5000$ particles considered as a benchmark value. Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the difference between the benchmark value and the estimation given by the two FFBS algorithms with $N = \tilde{N} = 50$.
+The original FFBS algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015} and the FFBS algorithm with rejuvenation proposed in this paper are used with $N = \tilde{N} = 25$ and the estimated posterior probabilities $\mathbb{P}(a_k=1|Y_{1:n})$. For comparable computational costs, the two-filter method of \cite{briers:doucet:maskell:2010} and the method with rejuvenation are run with $N=100$. All these algorithms are compared to the estimation obtained with the proposed FFBS algorithm with rejuvenation and $5000$ particles considered as a benchmark value. Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the absolute difference between the benchmark value and the estimations given by all algorithms.
 \begin{figure}
 \centering
-\includegraphics[scale=.3]{err_est_ffbs}
-\caption{Posterior probabilities estimation error for the two FFBS algorithms.}
+\includegraphics[scale=.3]{err_est}
+\caption{Posterior probabilities estimation error for all algorithms.}
 \label{fig:ffbs:err}
 \end{figure}
-In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the estimation for the two algorithms to illustrate that both estimators have similar variability. 
+In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the estimation for each algorithm to illustrate that both estimators have similar variability. 
 \begin{figure}
 \centering
-\includegraphics[scale=.3]{var}
-\caption{Empirical variances of the estimation for the two FFBS algorithms.}
+\includegraphics[scale=.3]{var2}
+\caption{Empirical variances of the estimation of $\mathbb{P}(a_k=1|Y_{1:n})$ for all algorithms.}
 \label{fig:ffbs:var}
 \end{figure}
-Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
-\paragraph{Experiment 1:}
-\[
-\pi_1=\pi_2 = 1/2\\;\;d_1 = \begin{pmatrix}0 \\ 0.5 \end{pmatrix}\;\; d_2 = \begin{pmatrix}0 \\ 0\end{pmatrix}\\;\;c_1= \begin{pmatrix}0 & 0& 0 & 0 \end{pmatrix}'\;\;c_2 =\begin{pmatrix}0 & 0 & 0 & 0 \end{pmatrix}'\eqsp,
-\]
-\[
-Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T = \begin{pmatrix}1 & -0.02\\ 0 & 0.96\end{pmatrix}\;\;\barH_1 = \begin{pmatrix}0.25 & 0.01\\ 0.01 & 0.01\end{pmatrix}\;\;\barH_2 = \begin{pmatrix}0.3 & 0\\ 0 & 0.3\end{pmatrix}\eqsp,
-\]
-\[
-B = \begin{pmatrix}1 & 1 & 1 & 1\\ 0 & 0.5 & 0.5 & 0.1 \end{pmatrix}'\;\; \barG = \mathrm{diag}\left(0.1,0.1,0.1,0.1\right)\;\; \mu_1 = \begin{pmatrix}1 \\ 0\end{pmatrix}\;\; \Sigma_1 = \begin{pmatrix} 5 & 0 \\ 0  & 5\end{pmatrix}\eqsp.
-\]
-In this case, the benchmark value is given by the two-filter algorithm with rejuvenation and $N=1000$ particles.
-The two-filter approximations of the smoothing distributions are computed with $N=10$. 
-
-\paragraph{Experiment 2:}
-In this second experiment, we use the same parameters except that we increase by a factor $10$ the values in $\barG$. The smoothing distributions are estimated with $N=15$ particles. The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the regimes given by the algorithms using $\gamma^{}_i (a_i, z_i) = p^N(a_{i},z_{i}|y_{1:i-1})$ where $p^N(a_{i},z_{i}|y_{1:i-1})$ is defined by \eqref{eq:rN}.
-%p^N(a_{i},z_{i}|y_{1:i-1}) = \sum_{k=1}^N \omega_{\mathsf{f},i}^k(a_{i})\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{z_{i}}^2+z'_{i}r_{i-1}^k(a_{i})\right\}\eqsp.
-%\end{equation}:
+%Then, the performance of the two-filter based algorithms are compared in two different settings with $n=1500$ observations.
+%\paragraph{Experiment 1:}
 %\[
-%\gamma^{}_i (a_i, z_i) = \sum_{k=1}^{N} Q(a^{k}_{i-1},a_i) \omega^{k}_{i-1} \exp\left\{ -\frac{1}{2} \log \left|\barH_{a^k_{i-1}} \right| -\frac{1}{2}\normMat{\barH_{a^k_{i-1}}}{z_i - d_{a^k_{i-1}} -T \mu^k_{i-1} }^2\right\} \eqsp.
+%\pi_1=\pi_2 = 0.5\\;\;d_1 = \begin{pmatrix}0 \\ 0.5 \end{pmatrix}\;\; d_2 = \begin{pmatrix}0 \\ 0\end{pmatrix}\\;\;c_1= \begin{pmatrix}0 & 0& 0 & 0 \end{pmatrix}'\;\;c_2 =\begin{pmatrix}0 & 0 & 0 & 0 \end{pmatrix}'\eqsp,
 %\]
-In both cases, the two-filter algorithm with rejuvenation behaves slightly better than \cite{briers:doucet:maskell:2010} which does not detect some regime switchings (for instance  at time 780 in Figure~\ref{fig:exp1:label} and at time 300 in Figure~\ref{fig:exp2:label}) or gives false detections (for instance at time 10 in Figure~\ref{fig:exp2:label}).
-\begin{figure}
-\centering
-\includegraphics[scale=.5]{N10_1_500}
-\includegraphics[scale=.5]{N10_501_1000}
-\includegraphics[scale=.5]{N10_1001_1500}
-\caption{Experiment 1 - estimated probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=10$ particles,  RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
-\label{fig:exp1:label}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=.5]{N15_1_500}
-\includegraphics[scale=.5]{N15_501_1000}
-\includegraphics[scale=.5]{N15_1001_1500}
-\caption{Experiment 2 - estimated smoothing probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
-\label{fig:exp2:label}
-\end{figure}
+%\[
+%Q = \begin{pmatrix}0.99 & 0.01\\ 0.03 & 0.97\end{pmatrix}\;\;T = \begin{pmatrix}1 & -0.02\\ 0 & 0.96\end{pmatrix}\;\;\barH_1 = \begin{pmatrix}0.25 & 0.01\\ 0.01 & 0.01\end{pmatrix}\;\;\barH_2 = \begin{pmatrix}0.3 & 0\\ 0 & 0.3\end{pmatrix}\eqsp,
+%\]
+%\[
+%B = \begin{pmatrix}1 & 1 & 1 & 1\\ 0 & 0.5 & 0.5 & 0.1 \end{pmatrix}'\;\; \barG = \mathrm{diag}\left(0.1,0.1,0.1,0.1\right)\;\; \mu_1 = \begin{pmatrix}1 \\ 0\end{pmatrix}\;\; \Sigma_1 = \begin{pmatrix} 5 & 0 \\ 0  & 5\end{pmatrix}\eqsp.
+%\]
+%In this case, the benchmark value is given by the two-filter algorithm with rejuvenation and $N=1000$ particles.
+%The two-filter approximations of the smoothing distributions are computed with $N=10$. 
+%
+%\paragraph{Experiment 2:}
+%In this second experiment, we use the same parameters except that we increase by a factor $10$ the values in $\barG$. The smoothing distributions are estimated with $N=15$ particles. The specific form of $B_1$ (first row with entries equal to one) and the fact that $T_1 = T_2$, $B_1 = B_2 $ and $\barG_1 = \barG_2$ are also motivated by the application to WTI crude oil data.  It is assumed that the differences between the two regimes are given by the state's dynamics ($d_1$, $d_2$, $\barH_1$ and $\barH_2$). Figures~\ref{fig:exp1:label} and~\ref{fig:exp2:label} displays the approximations of the  posterior distributions of the regimes given by the algorithms using $\gamma^{}_i (a_i, z_i) = p^N(a_{i},z_{i}|y_{1:i-1})$ where $p^N(a_{i},z_{i}|y_{1:i-1})$ is defined by \eqref{eq:rN}.
+%%p^N(a_{i},z_{i}|y_{1:i-1}) = \sum_{k=1}^N \omega_{\mathsf{f},i}^k(a_{i})\exp\left\{-\frac{1}{2}\normMat{\Omega^k_{i-1}(a_{i})}{z_{i}}^2+z'_{i}r_{i-1}^k(a_{i})\right\}\eqsp.
+%%\end{equation}:
+%%\[
+%%\gamma^{}_i (a_i, z_i) = \sum_{k=1}^{N} Q(a^{k}_{i-1},a_i) \omega^{k}_{i-1} \exp\left\{ -\frac{1}{2} \log \left|\barH_{a^k_{i-1}} \right| -\frac{1}{2}\normMat{\barH_{a^k_{i-1}}}{z_i - d_{a^k_{i-1}} -T \mu^k_{i-1} }^2\right\} \eqsp.
+%%\]
+%In both cases, the two-filter algorithm with rejuvenation behaves slightly better than \cite{briers:doucet:maskell:2010} which does not detect some regime switchings (for instance  at time 780 in Figure~\ref{fig:exp1:label} and at time 300 in Figure~\ref{fig:exp2:label}) or gives false detections (for instance at time 10 in Figure~\ref{fig:exp2:label}).
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.5]{N10_1_500}
+%\includegraphics[scale=.5]{N10_501_1000}
+%\includegraphics[scale=.5]{N10_1001_1500}
+%\caption{Experiment 1 - estimated probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=10$ particles,  RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
+%\label{fig:exp1:label}
+%\end{figure}
+%
+%\begin{figure}
+%\centering
+%\includegraphics[scale=.5]{N15_1_500}
+%\includegraphics[scale=.5]{N15_501_1000}
+%\includegraphics[scale=.5]{N15_1001_1500}
+%\caption{Experiment 2 - estimated smoothing probabilities by \cite{briers:doucet:maskell:2010} (blue) and RBTF (red) with $N=15$ particles, RBTF with $N=1000$ particles (black line) and true regimes (squared black).}
+%\label{fig:exp2:label}
+%\end{figure}
 
 \section{Application to CME crude oil (WTI)}
 \label{sec:crudeoil}
