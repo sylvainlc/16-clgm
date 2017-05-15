@@ -460,7 +460,8 @@ The original FFBS algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015} a
 \caption{Posterior probabilities estimation error for all algorithms.}
 \label{fig:ffbs:err}
 \end{figure}
-In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the estimation for each algorithm to illustrate that both estimators have similar variability. 
+In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the estimation for each algorithm.
+Figure~\ref{fig:ffbs:err} and  Figure~\ref{fig:ffbs:var} illustrate that in both cases the additional rejuvenation step improves the accuracy and the variability of SMC smoothers. In addition, even with a sharp choice for the artificial distributions $\gamma_i$, $1\le i\le n$,  FFBS based methods outperform two-filter based smoothers. 
 \begin{figure}
 \centering
 \includegraphics[scale=.3]{var2}
