@@ -21,14 +21,14 @@ The paper surveys recent Rao-Blackwellized particle smoothers and presents a par
 
 {\em 
 
-It is true that our rejuvenation step shares some resemblance with the algorithms of [FWT10] and [LBS+16, Section V.B]. As noted in [FWT10, Secion~2.6], two-filter smoothers are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. The authors illustrate this issue in the case where the hidden state is an AR(2) process. To overcome the weakness of such standard two-filter approaches, [FWT10] samples new particles at time $i$ conditional on forward particles up to time $i-1$ and on backward particles from time $i+1$ which are appropriately weighted. This allows to produce new particles at time $i$ and to obtain a SMC approximation whose support is not restricted to the backward particles at time $i+1$ as in the original two-filter algorithm.  The particle rejuvenation proposed in our paper exploits this idea in the specific case of linear and Gaussian models where explicit computations allows to produce an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$ and without any additional sampling steps.
+It is true that our rejuvenation step shares some resemblance with the algorithms of [FWT10] and [LBS+16, Section V.B]. As noted in [FWT10, Secion~2.6], two-filter smoothers are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. The authors illustrate this issue in the case where the hidden state is an AR(2) process. To overcome the weakness of such standard two-filter approaches, [FWT10] samples new particles at time $i$ conditional on forward particles up to time $i-1$ and on backward particles from time $i+1$ which are appropriately weighted. This allows to produce new particles at time $i$ and to obtain a SMC approximation whose support is not restricted to the backward particles at time $i+1$ as in the original two-filter algorithm.  The particle rejuvenation proposed in our paper exploits this idea in the specific case of linear and Gaussian models where explicit computations allows to produce an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$. In addition, it produces a direct approximation of the target distribution based on $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$  without any additional importance sampling steps.
 
 
-On the other hand, another modification of the FFBS algorithm based on a Markov chain Monte Carlo sampling step has been introduced in [LBS+16]. Instead of sampling from  explicitly from (12), [LBS+16] proposed to draw a forward path $a_{1:i-1}$ in $(a^k_{1:i-1})_{1\le k \le N}$ and a sate $a_i$ in $\{1,\ldots,J\}$ according to:
+On the other hand, another modification of the FFBS algorithm based on a Markov chain Monte Carlo sampling step was introduced in [LBS+16]. Instead of sampling from  explicitly from (12), [LBS+16] proposed to draw a forward path $a_{1:i-1}$ in $(a^k_{1:i-1})_{1\le k \le N}$ and a sate $a_i$ in $\{1,\ldots,J\}$ according to:
 \[
 \widetilde{q}(a_{1:i}|a_{i+1:n},y_{1:n}) = \sum_{k=1}^N \widetilde{\vartheta}^k_{i-1}\widetilde{q}(a_{i}|a^k_{1:i-1},a_{i+1:n},y_{1:n})\delta_{a^k_{1:i-1}}(a_{1:i-1})\eqsp,
 \]
-where $(\widetilde{\vartheta}^k_{i-1})_{1\le k \le N}$ are adjustment multipliers and $\widetilde{q}(a_{i}|a^k_{1:i-1},a_{i+1:n},y_{1:n})$ is a proposal kernel chosen by the user. This means that an ancestral path $a^{\star}_{1:i-1}$ is sampled in $(a^k_{1:i-1})_{1\le k \le N}$ with weights $(\widetilde{\vartheta}^k_{i-1})_{1\le k \le N}$ and $a^{\star}_i$ is sampled from $\widetilde{q}(\cdot|a^{\star}_{1:i-1},a_{i+1:n},y_{1:n})$. Then the proposed sequence $a^{\star}_{1:i}$ is accepted or rejected using the usual Metropolis-Hastings acceptance ratio. The choice of MCMC rejuvenation has interesting practical consequences as the computation of the acceptance ratio only requires to compute the posterior probability (11) for the proposed sequence $a^{\star}_{1:i}$ while our technique is based on the computation of  (11) for all combinations of sequences $(a^{k}_{1:i})_{1\le k \le N}$ and states $a_i\in\{1,\ldots,J\}$. The method proposed in [LBS+16], is computationally more efficient as its complexity depends mainly on the number of MCMC samples produced by the algorithm. However it also requires a fair amount of tuning to choose efficient adjustment multipliers and proposal kernels. Our proposed method is computationally more intensive but allows to sample explicitly from (12) without additional tuning parameters. Note that both methods provide similar results for the same computational costs.
+where $(\widetilde{\vartheta}^k_{i-1})_{1\le k \le N}$ are adjustment multipliers and $\widetilde{q}(a_{i}|a^k_{1:i-1},a_{i+1:n},y_{1:n})$ is a proposal kernel chosen by the user. This means that an ancestral path $a^{\star}_{1:i-1}$ is sampled in $(a^k_{1:i-1})_{1\le k \le N}$ with weights $(\widetilde{\vartheta}^k_{i-1})_{1\le k \le N}$ and $a^{\star}_i$ is sampled from $\widetilde{q}(\cdot|a^{\star}_{1:i-1},a_{i+1:n},y_{1:n})$. Then the proposed sequence $a^{\star}_{1:i}$ is accepted or rejected using the usual Metropolis-Hastings acceptance ratio. The choice of MCMC rejuvenation has interesting practical consequences as the computation of the acceptance ratio only requires to compute the posterior probability (11) for the proposed sequence $a^{\star}_{1:i}$ while our technique is based on the computation of  (11) for all combinations of sequences $(a^{k}_{1:i})_{1\le k \le N}$ and states $a_i\in\{1,\ldots,J\}$. The method proposed in [LBS+16] is computationally less costly as its complexity depends mainly on the number of MCMC samples produced by the algorithm. However it also requires a fair amount of tuning to choose efficient adjustment multipliers and proposal kernels. Our proposed method is computationally more intensive but allows to sample explicitly from (12) without additional tuning parameters. Note that both methods provide similar results for the same computational costs.
 These remarks were added at the end of Section~2.2 and Section~2.3.1.
 }
 
@@ -48,7 +48,7 @@ A clear presentation of the state-of-the-art algorithms, e.g. what posterior pdf
 \vspace{.2cm}
 
 {\em
-\noindent  This comment helped to greatly improved the readability of the paper. As explained in the previous paragraph, Section~2.3.1 is now devoted to the original Rao-Blackwellized two-filter method and Section~2.3.2 to the rejuvenation step. Some additional motivations to introduce rejuvenation are given at the end of Sections~2.2.2 and~2.3.2 (see the answer to the associate editor). Two-filter smoothers are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. The particle rejuvenation proposed in our paper exploits the idea introduced in [FWT10] in the specific case of linear and Gaussian models where explicit computations allows to produce an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$ and without any additional sampling steps. Most of the computations have also been postponed to the appendix in order to highlight the overall picture and avoid technicalities.
+\noindent  This comment helped to greatly improved the readability of the paper. As explained in the previous paragraph, Section~2.3.1 is now devoted to the original Rao-Blackwellized two-filter method and Section~2.3.2 to the rejuvenation step. The overall idea supporting two-filter based algorithms is clearly presented in Section~2.3.1 and most of the computations have also been postponed to the appendix in order to highlight the overall picture and avoid technicalities. Some additional motivations to introduce rejuvenation are given at the end of Sections~2.2.2 and~2.3.2 (see the answer to the associate editor). Two-filter smoothers are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. The particle rejuvenation proposed in our paper exploits the idea introduced in [FWT10] in the specific case of linear and Gaussian models where explicit computations allows to produce an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$ and without any additional sampling steps.
 }
 
 \vspace{.5cm}
@@ -58,16 +58,16 @@ A clear presentation of the state-of-the-art algorithms, e.g. what posterior pdf
 \vspace{.2cm}
 
 {\em
-\noindent Some additional numerical experiments were added in Section~3. For each simulation study which was previously given in Section~3 for either FFBS or two-filter methods, now both algorithms are used and compared to their counterpart with rejuvenation. Our main objective is then to show the improvement of the particle rejuvenation steps for both methods.  This also confirms that FFBS algorithm perform better even with a sharp choice for the  $\gamma_i$'s but also that rejuvenation steps improve both the accuracy and the variance of teach method.
+\noindent Even is the paper is not a survey of all Rao-Blackwellized methods for CLGM anymore, some additional numerical experiments were added in Section~3. Each simulation study which was previously given in Section~3 was devoted either to FFBS or two-filter based methods. Now, both algorithms are used and compared to their counterpart with rejuvenation. Our main objective is then to show the improvement of the particle rejuvenation steps for both methods.  This also confirms that FFBS algorithm perform better even with a sharp choice for the  $\gamma_i$'s but also that rejuvenation steps improve both the accuracy and the variance of each method.
 }
 
 \vspace{.5cm}
 
-\noindent All minor comments were taken into consideration and typos were corrected. Some specific details are given below.
+\noindent The minor comments were taken into consideration and typos were corrected. Some specific details are given below.
  
- \vspace{.5cm}
+\vspace{.5cm}
  
- \noindent The authors talk about two FFBS algorithms that they compare to the FFBS with
+\noindent The authors talk about two FFBS algorithms that they compare to the FFBS with
 particle rejuvenation. But which two? Kim's and Lindsten's? Some more details
 would be helpful, also which forward filter has been used.
 
@@ -75,16 +75,31 @@ would be helpful, also which forward filter has been used.
 
 {\em 
 \noindent The two FFBS algorithms are the original version of [LBS+16]  and the algorithm with rejuvenation.
-A first (costly) run of the FFBS algorithm with rejuvenation with a great number of particles ($N=5000$) is used as a benchmark value. Then the posterior distributions are estimated by the original methods and the methods with rejuvenation with $N=50$ particles are compared to this  benchmark run.
+A first (costly) run of the FFBS algorithm with rejuvenation with a great number of particles ($N=5000$) is used as a benchmark value. Then the posterior distributions are estimated by the original methods and the methods with rejuvenation with fewer particles and compared to this  benchmark run.
 }
+
+\vspace{.5cm}
+
+\noindent Figure 1 shall be Table 1? In the text it is 2500 iterations, in the Table
+caption it is 3500? How is Std. Dev obtained? I mean is this simulated data or real data where
+the true parameters $\theta$ are usually unknown?
+
+\vspace{.2cm}
+
+\noindent {\em 
+The estimated values were indeed obtained after 2500 iterations of the algorithm. The standard deviations are obtained with 50 independent Monte Carlo runs of the estimation algorithm (and the estimated value is set as the mean over all runs). This is now stated clearly in the paper.
+}
+
 
 \subsubsection*{Referee 2}
 \noindent It is well known that SMC algorithms, in their most basic form, are numerically unstablewhen used for approximating distributions defined on path spaces of increasing dimension. This is due to the particle path degeneracy phenomenon caused by the resampling mechanism of SMC algorithms. The degeneracy appears to be a potential problem for the estimators discussed in the paper, since the approximation of thebackward kernel (on, e.g., p. 8, line 52) involves quantities such as the mean and thecovariance matrix of the conditional distribution of $z_i$ given the states $a_{1:i}$ and the observations,evaluated along the particle genealogical paths. I miss a discussion on this. If the effect exists, does the rejuvenation proposed by the authors counteract the same? (I do not think so).
 
 \vspace{.2cm}
 {\em
-\noindent As explained to the associate editor and to  Referee~1, it is true that particle smoothers are prone to degenerate when they are based on  the genealogy of the forward or backward particles. In addition, in the specific case of two-filter based smoothers, [FWT10, Secion~2.6] noted that these algorithms are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. 
-The particle rejuvenation proposed in our paper produces an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$. In the specific case of linear and Gaussian models, Kalman filtering techniques allow to compute explicitly the approximation of the target distribution at time $i$ based on  $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$. The support of the approximated distribution is not restricted to $(\tilde{a}^k_{i})_{1\le k \le N}$ to overcome particle depletion. The marginalization over the linear states  builds new trajectories $(a^k_{1:i-1},j,\tilde{a}^\ell_{i+1:n})_{1\le k,\ell \le N}$ for all $1\le j \le J$ which have not been sampled by the forward and backward filters. Although this does not overcome the overall degeneracy issue, numerical experiments highlight that this improves the performance of the algorithms.
+\noindent As explained to the associate editor and to  Referee~1, it is true that particle smoothers are prone to degenerate when they are based on  the genealogy of the forward or backward particles. In addition, in the specific case of two-filter based smoothers, [FWT10, Section~2.6] noted that these algorithms are prone to suffer from degeneracy issues when the algorithm associates forward particles at time $i-1$ with backward particles at time $i$. 
+The particle rejuvenation proposed in our paper produces an approximation using $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$ with support $\{1,\ldots,J\}$. In the specific case of linear and Gaussian models, Kalman filtering techniques allow to compute explicitly the approximation of the target distribution at time $i$ based on  $(a^k_{1:i-1})_{1\le k \le N}$ and $(\tilde{a}^k_{i+1:n})_{1\le k \le N}$. 
+
+Therefore, the support of the approximated distribution is not restricted to $(\tilde{a}^k_{i})_{1\le k \le N}$ to overcome particle depletion. The marginalization over the linear states  builds new trajectories of the form $(a^k_{1:i-1},j,\tilde{a}^\ell_{i+1:n})_{1\le k,\ell \le N}$ for all $1\le j \le J$ which have not been sampled by the forward and backward filters. Although this does not overcome the overall degeneracy issue, numerical experiments highlight that this improves the performance of all Rao-Blackwellized SMC smoothers. Additional comments were added at the end of Section~2.2 and Section~2.3.1.
 }
 
 
@@ -94,7 +109,8 @@ The particle rejuvenation proposed in our paper produces an approximation using 
 
 \vspace{.2cm}
 {\em
-\noindent The intuition supporting particle rejuvenation is explained in the answers to the associate editor and to Referee~1. There is no theoretical result to prove that this approach provides a better approximation of the target distributions. However, our numerical experiments hint that this actually improves the accuracy and variance of the proposed estimators which would be even more interesting with additional regimes or additional rejuvenation steps. In addition, the additional computational cost is not prohibitive as Kalman filtering steps are much faster than the combination of the forward and backward particles whose complexity grows with $N^2$ (but who is stil necessary when no rejuvenation step is introduced).
+\noindent The intuition supporting particle rejuvenation is explained in the answers to the associate editor and to Referee~1. There is no theoretical result to prove that this approach provides a better approximation of the target distributions. However, our numerical experiments hint that this actually improves the accuracy and variance of the proposed estimators which would be even more interesting with additional regimes or additional rejuvenation steps. 
+[FWT10, Section~2.6] illustrated the degeneracy issue of two-filter based smoothers with the example of an AR(2) process. Our rejuvenation exploits the idea introduced in [FWT10, Section~2.6] to overcome degeneracy issues in the context of CLGM. In addition, the additional computational cost is not prohibitive as Kalman filtering steps are much faster than the combination of the forward and backward particles whose complexity grows with $N^2$ (but who is stil necessary when no rejuvenation step is introduced).
 }
 
 \vspace{.5cm}
@@ -105,7 +121,7 @@ The particle rejuvenation proposed in our paper produces an approximation using 
 
 \vspace{.2cm}
 {\em
-\noindent The identity was added in Section~2.3.1 in a more detailed derivation of the backward filter.
+\noindent The identity was added in Section~2.3.1 in a more detailed derivation of the backward filter. We thank Referee~2 for this help to improve the presentation of the backward filter.
 }
 
 \vspace{.5cm}
@@ -114,7 +130,7 @@ The particle rejuvenation proposed in our paper produces an approximation using 
 
 \vspace{.2cm}
 {\em
-\noindent The additional computational cost of the rejuvenation step comes from the Kalman filtering steps which are much faster than the combination of the forward and backward particles whose complexity grows with $N^2$. However, this combination is also necessary in the original two-filter algorithm of [BDM10] with no rejuvenation.
+\noindent The additional computational cost of the rejuvenation step comes from the Kalman filtering steps needed to extend all backward trajectories (built with particles). These steps are much faster than the combination of the forward and backward particles whose complexity grows with $N^2$. However, this combination is also necessary in the original two-filter algorithm of [BDM10] with no rejuvenation. A comment was added in the numerical section.
 }
 
 \vspace{.5cm}
