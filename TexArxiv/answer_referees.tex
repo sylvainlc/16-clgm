@@ -58,7 +58,7 @@ A clear presentation of the state-of-the-art algorithms, e.g. what posterior pdf
 \vspace{.2cm}
 
 {\em
-\noindent Even is the paper is not a survey of all Rao-Blackwellized methods for CLGM anymore, some additional numerical experiments were added in Section~3. Each simulation study which was previously given in Section~3 was devoted either to FFBS or two-filter based methods. Now, both algorithms are used and compared to their counterpart with rejuvenation. Our main objective is then to show the improvement of the particle rejuvenation steps for both methods.  This also confirms that FFBS algorithm performs better even with a sharp choice for the  $\gamma_i$'s but also that rejuvenation steps improve both the accuracy and the variance of each method.
+\noindent Even is the paper is not a survey of all Rao-Blackwellized methods for CLGM anymore, some additional numerical experiments were added in Section~3. The simulation study which was previously given in Section~3 was devoted either to FFBS or two-filter based methods. Now, both algorithms are used and compared to their counterpart with rejuvenation. Our main objective is then to show the improvement of the particle rejuvenation steps for both methods.  This also confirms that FFBS algorithm performs better even with a sharp choice for the  $\gamma_i$'s but also that rejuvenation steps improve both the accuracy and the variance of each method.
 }
 
 \vspace{.5cm}
@@ -90,6 +90,16 @@ the true parameters $\theta$ are usually unknown?
 The estimated values were indeed obtained after 2500 iterations of the algorithm. The standard deviations are obtained with 50 independent Monte Carlo runs of the estimation algorithm (and the estimated value is set as the mean over all runs). This is now stated clearly in the paper.
 }
 
+\vspace{.5cm}
+
+\noindent p.7, L.51: Is $\Omega_i^{-1}$, $\Lambda_i$ correct? In the paper by Lindsten it is
+$\Omega_i$, $\Lambda_i^{-1}$.
+
+\vspace{.2cm}
+
+\noindent {\em 
+The equation is correct. The difference comes from the fact that $\|z\|_{A} = z'Az$ in the paper by Linddsten and $\|z\|_{A} = z'A^{-1}z$ in our paper.
+}
 
 \subsubsection*{Referee 2}
 \noindent It is well known that SMC algorithms, in their most basic form, are numerically unstable
