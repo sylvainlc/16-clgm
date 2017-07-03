@@ -627,7 +627,7 @@ B_1 = B_2 =1\;\;\barG_1 = 0.3\;\;\barG_2 = 0.1\eqsp.
 The original FFBS algorithm of \cite{lindsten:bunch:sarkka:schon:godsill:2015} and the FFBS algorithm with rejuvenation proposed in this paper are used with $N = \tilde{N} = 25$. For comparable computational costs, the two-filter method of \cite{briers:doucet:maskell:2010} and the method with rejuvenation are run with $N=100$.  The artificial distributions are chosen as $\gamma^{}_i (a_i, z_i) = p^N(a_{i},z_{i}|y_{1:i-1})$ where $p^N(a_{i},z_{i}|y_{1:i-1})$ is defined by \eqref{eq:rN}. All these algorithms are compared to the estimation obtained with the proposed FFBS algorithm with rejuvenation and $5000$ particles considered as a benchmark value. Figure~\ref{fig:ffbs:err} displays the mean estimation error over $100$ independent Monte Carlo runs. The estimation error is defined as the absolute difference between the benchmark value and the estimations given by all algorithms.
 \begin{figure}
 \centering
-\includegraphics[scale=.3]{err_est}
+\includegraphics[scale=.3]{err_est.eps}
 \caption{Posterior probabilities estimation error for all algorithms.}
 \label{fig:ffbs:err}
 \end{figure}
@@ -635,7 +635,7 @@ In addition, Figure~\ref{fig:ffbs:var} displays the empirical variance of the es
 Figure~\ref{fig:ffbs:err} and  Figure~\ref{fig:ffbs:var} illustrate that in both cases the additional rejuvenation step improves the accuracy and the variability of SMC smoothers. In addition, even with a sharp choice for the artificial distributions $\gamma_i$, $1\le i\le n$,  FFBS based methods outperform two-filter based smoothers for this model. 
 \begin{figure}
 \centering
-\includegraphics[scale=.3]{var2}
+\includegraphics[scale=.3]{var2.eps}
 \caption{Empirical variances of the estimation of $\mathbb{P}(a_k=1|Y_{1:n})$ for all algorithms.}
 \label{fig:ffbs:var}
 \end{figure}
@@ -802,7 +802,7 @@ As expected, we obtain $\sigma_1 \geq \sigma_2$, $\alpha_1 \geq \alpha_2$, $\eta
 Figure~\ref{fig:LogPriceTermStructure:data} compares the evolution of future $1M$ (the nearest contracts) to the \emph{term structure} observed from CME WTI crude oil, defined as the difference of future $13M$ and future $1M$ (to avoid seasonality). The figure shows that it is not necessary to have an inverse relationship between the  price of the nearest contract and the term structure. But when a significant drop in the price  of the nearest contract occurs, the term structure increases (i.e. in contango).
 \begin{figure}
 \centering
-\includegraphics[scale=.6,angle=90]{LogPrice_TermStructure}
+\includegraphics[scale=.6,angle=90]{LogPrice_TermStructure.eps}
 \caption{Log-price (red line) and slope of future curves (blue line).}
 \label{fig:LogPriceTermStructure:data}
 \end{figure}
@@ -816,14 +816,14 @@ Figure~\ref{fig:posterior:data} and~\ref{fig:posterior:data:logprice} display th
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=.75,angle=90]{Posterior_Data}
+	\includegraphics[scale=.75,angle=90]{Posterior_Data.eps}
 	\caption{Posterior probability (triangle black) and slope of future curves (blue line).}
 	\label{fig:posterior:data}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=.75]{Posterior_Data_LogPrice}
+	\includegraphics[scale=.75]{Posterior_Data_LogPrice.eps}
 	\caption{Posterior probability (triangle black) and slope of future curves (blue line).}
 	\label{fig:posterior:data:logprice}
 \end{figure}
@@ -1017,12 +1017,12 @@ D.~Barber.
 \bibitem[BDM10]{briers:doucet:maskell:2010}
 M.~Briers, A.~Doucet, and S.~Maskell.
 \newblock Smoothing algorithms for state-space models.
-\newblock {\em {A}nn. {I}nst. {S}tat. {M}ath}, 62(1):61--89, 2010.
+\newblock {\em {A}nnals of the {I}nstitute of {S}tatistical {M}athematics}, 62(1):61--89, 2010.
 
 \bibitem[BF63]{bryson:frazier:1963}
 A.E. Bryson and M.~Frazier.
 \newblock {Smoothing for linear and nonlinear dynamic systems}.
-\newblock {\em {Proc. Optimum Sys. Synthesis Conf.}}, 1963.
+\newblock {\em {Proceedings of the optimum system synthesis conference}}, 1963.
 
 \bibitem[BGM08]{barembruch:garivier:moulines:2008}
 S.~Barembruch, A.~Garivier, and E.~Moulines.
@@ -1051,7 +1051,7 @@ A.~Doucet, N.~Gordon, and V.~Krishnamurthy.
 \bibitem[DLR77]{dempster:laird:rubin:1977}
 A.~P. Dempster, N.~M. Laird, and D.~B. Rubin.
 \newblock Maximum likelihood from incomplete data via the {EM} algorithm.
-\newblock {\em Journal of the Royal Statistical Society B}, 39(1):1--38 (with
+\newblock {\em Journal of the Royal Statistical Society: Series B}, 39(1):1--38 (with
   discussion), 1977.
 
 \bibitem[DM13]{delmoral:2013}
@@ -1063,7 +1063,7 @@ P.~Del~Moral.
 \bibitem[FC03]{fearnhead:clifford:2003}
 P.~Fearnhead and P.~Clifford.
 \newblock {On-line inference for hidden {M}arkov models via particle filters}.
-\newblock {\em {J.R. Statist. Soc. B}}, 65:887--899, 2003.
+\newblock {\em {Journal of the Royal Statistical Society: Series B}}, 65:887--899, 2003.
 
 \bibitem[FGDW02]{fong:godsill:doucet:west:2002}
 W.~Fong, S.J. Godsill, A.~Doucet, and M.~West.
@@ -1085,7 +1085,7 @@ R.~Gibson and Schwartz E.S.
 \bibitem[HK98]{huerzeler:kunsch:1998}
 M.~H{\"u}rzeler and H.~R. K{\"u}nsch.
 \newblock {M}onte {C}arlo approximations for general state-space models.
-\newblock {\em J. Comput. Graph. Statist.}, 7:175--193, 1998.
+\newblock {\em Journal of {C}omputational and {G}raphical {S}tatistics}, 7:175--193, 1998.
 
 \bibitem[HK04]{hansen:kern:2004}
 N.~Hansen and S.~Kern.
@@ -1101,7 +1101,7 @@ N.~Hansen and A.~Ostermeier.
 \bibitem[Kal60]{kalman:1960}
 R.E. Kalman.
 \newblock {A new approach to linear filtering and prediction problems}.
-\newblock {\em J. {B}asic {E}ngng}, 82:35--45, 1960.
+\newblock {\em Journal of {B}asic {E}ngineering}, 82:35--45, 1960.
 
 \bibitem[Kim94]{kim:1994}
 CJ. Kim.
