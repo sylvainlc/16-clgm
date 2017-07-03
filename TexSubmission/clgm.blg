@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: clgm.aux
+The style file: alpha.bst
+Database file #1: ./clgm_bib.bib
+You've used 26 entries,
+            2543 wiz_defined-function locations,
+            717 strings with 8824 characters,
+and the built_in function-call counts, 10665 in all, are:
+= -- 1089
+> -- 511
+< -- 8
++ -- 176
+- -- 174
+* -- 814
+:= -- 1789
+add.period$ -- 78
+call.type$ -- 26
+change.case$ -- 163
+chr.to.int$ -- 26
+cite$ -- 26
+duplicate$ -- 379
+empty$ -- 750
+format.name$ -- 205
+if$ -- 2129
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 28
+newline$ -- 134
+num.names$ -- 78
+pop$ -- 113
+preamble$ -- 1
+purify$ -- 191
+quote$ -- 0
+skip$ -- 319
+stack$ -- 0
+substring$ -- 734
+swap$ -- 35
+text.length$ -- 8
+text.prefix$ -- 6
+top$ -- 0
+type$ -- 200
+warning$ -- 0
+while$ -- 108
+width$ -- 30
+write$ -- 336

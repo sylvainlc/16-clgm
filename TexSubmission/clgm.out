@@ -1,0 +1,15 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Rao-Blackwellized smoothing algorithms}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Forward filter}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{FFBS based algorithms}{section.2}% 4
+\BOOKMARK [3][-]{subsubsection.2.2.1}{FFBS algorithms of sarkka:bunch:godsill:2012,lindsten:bunch:godsill:schon:2013,lindsten:bunch:sarkka:schon:godsill:2015}{subsection.2.2}% 5
+\BOOKMARK [3][-]{subsubsection.2.2.2}{Particle rejuvenation of FFBS algorithms}{subsection.2.2}% 6
+\BOOKMARK [2][-]{subsection.2.3}{Rao-Blackwellized Two-filter Smoother}{section.2}% 7
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Rao-Blackwellized Two-filter Smoother of briers:doucet:maskell:2010}{subsection.2.3}% 8
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Particle rejuvenation of two-filter based algorithms}{subsection.2.3}% 9
+\BOOKMARK [1][-]{section.3}{Simulated data}{}% 10
+\BOOKMARK [1][-]{section.4}{Application to CME crude oil \(WTI\)}{}% 11
+\BOOKMARK [2][-]{subsection.4.1}{Model}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.2}{Numerical results}{section.4}% 13
+\BOOKMARK [1][-]{section.5}{Conclusions}{}% 14
+\BOOKMARK [1][-]{appendix.A}{Technical lemmas}{}% 15

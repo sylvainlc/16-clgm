@@ -1,0 +1,155 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{FGDW02}
+
+\bibitem[Alm16]{almansour:2016}
+A.~Almansour.
+\newblock Convenience yield in commodity price modeling: A regime switching
+  approach.
+\newblock {\em Energy Economics}, 53:238--247, 2016.
+
+\bibitem[Bar06]{barber:2006}
+D.~Barber.
+\newblock {Expectation correction for smoothed inference in switching linear
+  dynamical systems}.
+\newblock {\em Journal of {M}achine {L}earning {R}esearch}, 7:2515--2540, 2006.
+
+\bibitem[BDM10]{briers:doucet:maskell:2010}
+M.~Briers, A.~Doucet, and S.~Maskell.
+\newblock Smoothing algorithms for state-space models.
+\newblock {\em {A}nn. {I}nst. {S}tat. {M}ath}, 62(1):61--89, 2010.
+
+\bibitem[BF63]{bryson:frazier:1963}
+A.E. Bryson and M.~Frazier.
+\newblock {Smoothing for linear and nonlinear dynamic systems}.
+\newblock {\em {Proc. Optimum Sys. Synthesis Conf.}}, 1963.
+
+\bibitem[BGM08]{barembruch:garivier:moulines:2008}
+S.~Barembruch, A.~Garivier, and E.~Moulines.
+\newblock {On optimal sampling for particle filtering in digital
+  communication}.
+\newblock {\em IEEE 9th Workshop on Signal Processing Advances in Wireless},
+  pages 634--638, 2008.
+
+\bibitem[CL00]{chen:liu:2000}
+R.~Chen and J.S. Liu.
+\newblock Mixture kalman filters.
+\newblock {\em Journal of the Royal Statistical Society B}, 62:493--508, 2000.
+
+\bibitem[DGA00]{doucet:godsill:andrieu:2000}
+A.~Doucet, S.~Godsill, and C.~Andrieu.
+\newblock On sequential monte carlo sampling methods for bayesian filtering.
+\newblock {\em Statistics and computing}, 10:197--208, 2000.
+
+\bibitem[DGK01]{doucet:gordon:krishnamurthy:2001}
+A.~Doucet, N.~Gordon, and V.~Krishnamurthy.
+\newblock Particle filters for state estimation of jump {M}arkov linear
+  systems.
+\newblock {\em {IEEE T}ransactions on {S}ignal {P}rocessing}, 49(3):613--624,
+  2001.
+
+\bibitem[DLR77]{dempster:laird:rubin:1977}
+A.~P. Dempster, N.~M. Laird, and D.~B. Rubin.
+\newblock Maximum likelihood from incomplete data via the {EM} algorithm.
+\newblock {\em Journal of the Royal Statistical Society B}, 39(1):1--38 (with
+  discussion), 1977.
+
+\bibitem[DM13]{delmoral:2013}
+P.~Del~Moral.
+\newblock {\em Mean field simulation for Monte Carlo integration}.
+\newblock Chapman \& Hall / CRC Monographs on Statistics \& Applied
+  Probability, 2013.
+
+\bibitem[FC03]{fearnhead:clifford:2003}
+P.~Fearnhead and P.~Clifford.
+\newblock {On-line inference for hidden {M}arkov models via particle filters}.
+\newblock {\em {J.R. Statist. Soc. B}}, 65:887--899, 2003.
+
+\bibitem[FGDW02]{fong:godsill:doucet:west:2002}
+W.~Fong, S.J. Godsill, A.~Doucet, and M.~West.
+\newblock {Monte Carlo smoothing with application to audio signal enhancement}.
+\newblock {\em IEEE Transactions on {S}ignal {P}rocessing}, 50(2):438--449,
+  2002.
+
+\bibitem[FWT10]{fearnhead:wyncoll:tawn:2010}
+P.~Fearnhead, D.~Wyncoll, and J.~Tawn.
+\newblock {A sequential smoothing algorithm with linear computational cost}.
+\newblock {\em {Biometrika}}, 97:447--464, 2010.
+
+\bibitem[GE90]{gibson:schwartz:1990}
+R.~Gibson and Schwartz E.S.
+\newblock Stochastic convenience yield and the pricing of oil contingent
+  claims.
+\newblock {\em Journal of finance}, 45(3):959--976, 1990.
+
+\bibitem[HK98]{huerzeler:kunsch:1998}
+M.~H{\"u}rzeler and H.~R. K{\"u}nsch.
+\newblock {M}onte {C}arlo approximations for general state-space models.
+\newblock {\em J. Comput. Graph. Statist.}, 7:175--193, 1998.
+
+\bibitem[HK04]{hansen:kern:2004}
+N.~Hansen and S.~Kern.
+\newblock {Evaluating the CMA Evolution Strategy on Multimodal Test Functions}.
+\newblock {\em Eighth International Conference on Parallel Problem Solving from
+  Nature}, 72:337--354, 2004.
+
+\bibitem[HO01]{hansen:ostermeier:2001}
+N.~Hansen and A.~Ostermeier.
+\newblock {Completely derandomized self-adaptation in evolution strategies}.
+\newblock {\em Evolutionary {C}omputation}, 9(2):159--195, 2001.
+
+\bibitem[Kal60]{kalman:1960}
+R.E. Kalman.
+\newblock {A new approach to linear filtering and prediction problems}.
+\newblock {\em J. {B}asic {E}ngng}, 82:35--45, 1960.
+
+\bibitem[Kim94]{kim:1994}
+CJ. Kim.
+\newblock Dynamic linear models with markov-switching.
+\newblock {\em Journal of Econometrics}, 60(1-2):1--22, 1994.
+
+\bibitem[LBGS13]{lindsten:bunch:godsill:schon:2013}
+F.~Lindsten, P.~Bunch, S.J. Godsill, and T.B. Schon.
+\newblock Rao-{B}lackwellized particle smoothers for mixed linear/nonlinear
+  state-space models.
+\newblock {\em Proceedings of the 38th {IEEE I}nternational {C}onference on
+  {A}coustics, {S}peech and {S}ignal {P}rocessing ({ICASSP})}, 2013.
+
+\bibitem[LBS{\etalchar{+}}16]{lindsten:bunch:sarkka:schon:godsill:2015}
+F.~Lindsten, P.~Bunch, S.~Sarkka, T.B. Schon, and S.J. Godsill.
+\newblock Rao-{B}lackwellized particle smoothers for conditionally linear
+  {G}aussian models.
+\newblock {\em IEEE {J}ournal of {S}elected {T}opics in {S}ignal {P}rocessing},
+  10(2):353--365, 2016.
+
+\bibitem[RST65]{rauch:striebel:tung:1965}
+A.E. Rauch, C.T. Striebel, and F.~Tung.
+\newblock {Maximum likelihood estimates of linear dynamic systems}.
+\newblock {\em American Institute of Aeronautics and Astronautics journal},
+  3(8):1445--1450, 1965.
+
+\bibitem[Sar13]{sarkka:2013}
+S.~Sarkka.
+\newblock {\em Bayesian filtering and smoothing}.
+\newblock Cambridge {U}niversity {P}ress, 2013.
+
+\bibitem[SBG12]{sarkka:bunch:godsill:2012}
+S.~Sarkka, P.~Bunch, and S.J. Godsill.
+\newblock A backward-simulation based {R}ao-{B}lackwellized particle smoother
+  for conditionally linear {G}aussian models.
+\newblock {\em Proceedings of the 16th {IFAC S}ymposium on {S}ystem
+  {I}dentification {(SYSID)}}, 2012.
+
+\bibitem[Sch97]{schwartz:1997}
+E.S. Schwartz.
+\newblock The stochastic behaviour of commodity prices: Implications for
+  pricing and hedging.
+\newblock {\em The {J}ournal of {F}inance}, 3:923--973, 1997.
+
+\bibitem[SGN05]{schon:gustafsson:nordlund:2005}
+T.~Schon, F.~Gustafsson, and P.-J. Nordlund.
+\newblock Marginalized particle filters for mixed linear/nonlinear state-space
+  models.
+\newblock {\em {IEEE T}ransactions on {S}ignal {P}rocessing}, 53(7):2279--2289,
+  2005.
+
+\end{thebibliography}

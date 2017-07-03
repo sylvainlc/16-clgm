@@ -1,0 +1,169 @@
+\documentclass[nolayout]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsthm}
+\usepackage{geometry}
+\usepackage[textwidth=4cm,textsize=footnotesize]{todonotes}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{amssymb,color,bbm,xargs}
+\usepackage{graphicx}
+\usepackage[active]{srcltx}
+\usepackage{ifthen}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{accents}
+\usepackage{dsfont}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{subfig}
+\usepackage{multirow}
+\usepackage{placeins}
+
+\usepackage{aliascnt}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{H\hspace{-3pt}}
+\newtheorem*{assumption*}{A}
+\newtheorem{assumptionDelta}{H\hspace{-3pt}(\Delta)}
+\newtheorem{assumptionsmallSetD}{H\hspace{-3pt}(\smallSetD \times \smallSetD)}
+\newtheorem{assumptionAR}{AR\hspace{-3pt}}
+\newtheorem{assumptionCN}{CN\hspace{-3pt}}
+
+
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+
+\newtheorem{hypothese}{Hypothesis}
+\newtheorem{fact}[theorem]{Fact}
+
+
+\theoremstyle{definition}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark] {Remark}
+\aliascntresetthe{remark}
+
+
+
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\providecommand*{\definitionautorefname}{Definition}
+\providecommand*{\lemmaautorefname}{Lemma}
+\providecommand*{\exampleautorefname}{Example}
+\providecommand*{\propositionautorefname}{Proposition}
+\providecommand*{\procautorefname}{Procedure}
+\providecommand*{\exerciseautorefname}{Exercise}
+\providecommand*{\corollaryautorefname}{Corollary}
+\providecommand*{\remarkautorefname}{Remark}
+\providecommand*{\algorithmautorefname}{Algorithm}
+\providecommand*{\assumptionautorefname}{H\hspace*{-3pt}}  
+\providecommand*{\assumptionARautorefname}{AR\hspace*{-3pt}}
+\providecommand*{\assumptionCNautorefname}{CN\hspace*{-3pt}}
+
+
+\newcommand*{\largedot}{\cdot}
+
+\def\Rset{\mathbb{R}}
+\def\Nset{\mathbb{N}}
+\def\nset{\mathbb{N}}
+\def\rset{\mathbb{R}}
+\def\varb{b}
+\newcommand{\1}{\mathbbm{1}}
+
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+
+\def\ie{\textit{i.e.}}
+\newcommand{\coint}[1]{\left[#1\right)}
+\newcommand{\ocint}[1]{\left(#1\right]}
+\newcommand{\ooint}[1]{\left(#1\right)}
+\newcommand{\ccint}[1]{\left[#1\right]}
+\newcommand{\Wienerspace}{\mathbf{W}}
+
+\def\PE{\mathbb{E}}
+\newcommandx{\PEt}[2][1=]{\mathbb{E}_{#1}\left[#2\right]}
+\def\rmd{\mathrm{d}}
+\def\rme{\mathrm{e}}
+\def\target{\pi}
+\def\dim{d}
+\def\score{\accentset{\largedot}{\ell}}
+\def\Vdot{\dot{V}}
+\def\unitarget{f}
+\def\rmL{\mathrm{L}}
+\def\dimy{\mathsf{p}}
+\def\dimz{\mathsf{m}}
+\def\bfX{\boldsymbol{X}}
+\def\xbf{\boldsymbol{x}}
+\def\ybf{\boldsymbol{y}}
+\def\Xbf{\boldsymbol{X}}
+\def\G{\mathcal{G}}
+\def\barG{\overline{G}}
+\def\barH{\overline{H}}
+\def\Gammabf{\mathbf{\Gamma}}
+\def\Ybf{\boldsymbol{Y}}
+\newcommand{\norm}[1]{\left\Vert #1 \right \Vert}
+\newcommand{\plusinfty}{+ \infty}
+\newcommand{\defEns}[1]{\left \{ #1 \right \}}
+\newcommand{\abs}[1]{\left\vert #1 \right\vert}
+\def\Zbf{\boldsymbol{Z}}
+\def\eqsp{\,}
+\def\leb{\lambda}
+\def\limd{\underset{d\to +\infty}{\longrightarrow}}
+\newcommand{\normMat}[2]{\left\|#2\right\|_{#1}}
+
+
+
+\newcommand{\parenthese}[1]{\left( #1 \right)}
+\newcounter{hypH}
+\newenvironment{hypH}{\refstepcounter{hypH}\begin{itemize}
+\item[{\bf H\arabic{hypH}}]}{\end{itemize}}
+\newcommand{\eqdef}{\ensuremath{:=}}
+\newcommand{\setAccept}{\mathcal{A}}
+\def\iid{\operatorname{i.i.d.}}
+\newcommand{\sachant}[1]{\left| #1 \right.}
+\newcommand{\setDisconDotV}{\mathcal{D}_{\dot{V}}}
+
+\def\restriction#1#2{\mathchoice
+              {\setbox1\hbox{${\displaystyle #1}_{\scriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\textstyle #1}_{\scriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\scriptstyle #1}_{\scriptscriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\scriptscriptstyle #1}_{\scriptscriptstyle #2}$}
+              \restrictionaux{#1}{#2}}}
+\def\restrictionaux#1#2{{#1\,\smash{\vrule height .8\ht1 depth .85\dp1}}_{\,#2}}
+
+\newcommandx\sequence[3][2=,3=]
+{\ifthenelse{\equal{#3}{}}{\ensuremath{\{ #1_{#2}\}}}{\ensuremath{( #1_{#2}, \eqsp #2 \in #3 )}}}
+\newcommandx{\sequencen}[2][2=n\in\nset]{\ensuremath{( #1, \eqsp #2 )}}
+\newcommandx\dsequence[4][3=k,4=\zset]{\ensuremath{( (#1_{#3}, #2_{#3}), \eqsp #3 \in #4 )}}
+\newcommandx{\as}[1][1=\PP]{\ensuremath{#1\--\mathrm{a.s.}}}
+\newcommand{\eqspp}{\ \ }
+
+\def\canonicalFiltration{\mathscr{B}}
+
+\def\tildeX{\widetilde{X}}
+\def\tildeY{\widetilde{Y}}
+\def\barX{\bar{X}}
+\def\barY{\bar{Y}}
+\def\barS{\bar{S}}
+\newcommand{\coupling}[2]{\mathcal{C}(#1,#2)}
+\newcommand\proba[1]{\mathbb{P}\left[ #1 \right]}
+\newcommand\expe[1]{\mathbb{E}\left[ #1 \right]}
+\def\osc{\operatorname{osc}}
+\def\borel{\mathcal{B}}
+\def\mcf{\mathcal{F}}
